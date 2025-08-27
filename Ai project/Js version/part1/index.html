@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google Fonts Link For Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+    <title>My first chat bot</title>
+    <script src="script.js" defer></script>
+</head>
+<body class="show-chatbot">
+    <button class="chatbot-toggler">
+        <span class="material-symbols-outlined">mode_comment</span>
+        <span class="material-symbols-outlined">close</span>
+    </button>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+
+    <input id="phone" type="tel">
+
+    <script>
+    const input = document.querySelector("#phone");
+    window.intlTelInput(input, {
+        initialCountry: "auto", // détecte automatiquement par IP
+        geoIpLookup: function(callback) {
+        fetch("https://ipapi.co/json")
+            .then(res => res.json())
+            .then(data => callback(data.country_code))
+            .catch(() => callback("us"));
+        },
+        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
+    });
+    </script>
+    <div class="chatbot">
+        <header>
+            <span class="material-symbols-outlined">close</span>
+            <h2>Chatbot</h2>
+        </header>
+        <ul class="chatbox">
+            <li class="chat incoming">
+                <!-- symbol de la tête de robot -->
+                <span class="material-symbols-outlined">smart_toy</span>
+                <p>Hi there 😊 <br> How can I help you today? </p>
+            </li>
+            <li class="chat outgoing">
+            </li>
+        </ul>
+        <div class="chat-input">
+            <textarea placeholder="Enter a message..." required></textarea>
+            <span class="material-symbols-outlined">send</span>
+        </div>
+    </div>
+</body>
+</html>

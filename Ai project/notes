@@ -1,0 +1,8 @@
+Un plateau d'échec est composé de 64 cases, chaque joueur dispose de 16 pièces (il y en as donc 32 au total)
+Les pièces:
+   + 1 Roi
+   + 1 Reine
+   + 2 Tours
+   + 2 Fous
+   + 2 Cavaliers
+   + 8 pions

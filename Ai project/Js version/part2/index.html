@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <section class="chat-window">
+        <button class="close">x close</button>
+        <div class="chat">
+            <div class="model">
+                <p>Hi, how can I help you ?</p>
+            </div>
+        </div>
+        <div class="input-area">
+            <input placeholder="Ask me anything" type="text">
+
+            <!-- caché l'input -->
+            <input type="file" id="upload" style="display:none" multiple>
+            <button id="add button">
+                <img class="add" src="paper-clip.png" alt="add file">
+            </button>
+            <button id="sent button">
+                <img src="send.png" alt="sent icone">
+            </button>
+        </div>
+    </section>
+
+    <div class="chat-button">
+        <img src="ai.png" alt="">
+    </div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "@google/generative-ai": "https://esm.run/@google/generative-ai"
+            }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script type="module" src="script.js"></script>
+</body>
+</html>

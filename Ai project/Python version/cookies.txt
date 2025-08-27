@@ -1,0 +1,17 @@
+# Netscape HTTP Cookie File
+# http://curl.haxx.se/rfc/cookie_spec.html
+# This is a generated file!  Do not edit.
+
+.x.com	TRUE	/	TRUE	1789666346	guest_id_marketing	v1%3A174624855049459906
+.x.com	TRUE	/	TRUE	1789666346	guest_id_ads	v1%3A174624855049459906
+.x.com	TRUE	/	TRUE	1780801350	guest_id	v1%3A174624855049459906
+x.com	FALSE	/	FALSE	1761793429	g_state	{"i_l":0}
+.x.com	TRUE	/	TRUE	1789665750	kdt	lfnNsYqFjahBoP4iER3wOqrhvzWsk7gdQ9WzZgqW
+.x.com	TRUE	/	TRUE	1789665737	personalization_id	"v1_5dEI3DNYGpWbfGi0Kr0YdA=="
+.x.com	TRUE	/	TRUE	1755114737	gt	1955681324783558886
+.x.com	TRUE	/	FALSE	1789666346	__cuid	eb929e95502c46028167d6d8d28c17c3
+.x.com	TRUE	/	TRUE	1789665750	auth_token	c970df6342cab42f26d6602fc1a0fa07fe52f243
+.x.com	TRUE	/	TRUE	1789665751	ct0	d82cd42d984ca052346f8b0ad160bc2fd47f2c81b41bbfe1700c6a2ea40ef668f1b9d24e45bbe6b05c5dca34120178ad963bd9abf4754df41629d24c0d82b94f8ffa1a0be935ee44cd8c5219097f8636
+x.com	FALSE	/	FALSE	0	lang	en
+.x.com	TRUE	/	TRUE	1786642352	twid	u%3D1864085833080508417
+.x.com	TRUE	/	TRUE	1755192151	att	1-E7bWiFa8l3Cwdfc1K6zkipI7o8AaUXud3fpdG1io
