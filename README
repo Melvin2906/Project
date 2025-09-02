@@ -1,0 +1,11 @@
+This file will contain all the things that you'll need to upload my project:
+   - pip install Customtkinter --> for graphical part
+   - pip install pygame --> for graphical part
+   - pip install YoutubeSearch --> api for youtube search (optional)
+   - pip install SpeachRecognition --> basic api for speach to text
+   - pip install pyttsx3 --> basic api for text to speach
+   - pip install PyPDF2 --> for pdf treatment
+   - pip install PyPDF --> for pdf treatment
+   - pip install fpdf --> for pdf treatment
+   - pip install reportlab --> for pdf treatment
+   - pip install panda --> for exel file treatment

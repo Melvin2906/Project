@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const sent = document.getElementById("sent button")
-const fileInput = document.getElementById("add").files
+const sent = document.getElementById("sent-button")
+//const fileInput = document.getElementById("add").files
 const API_KEY = "";
 const genAi = new GoogleGenerativeAI(API_KEY);
 const model = genAi.getGenerativeModel({ 
@@ -14,29 +14,28 @@ let message = {
     history: []
 }
 
-async function sendMessage() {
+export async function sendMessage(userMessage) {
  
     console.log(message)
-    const userMessage = document.querySelector(".chat-window input").value;
 
     if (userMessage.length) {
         try {
-            document.querySelector(".chat-window input").value = "";
-            document.querySelector(".chat-window .chat").insertAdjacentHTML("beforeend", `
+            document.getElementById("user-Input").value = "";
+            document.getElementById("main-chat").insertAdjacentHTML("beforeend", `
                 <div class="user">
                     <p>${userMessage}</p>
                 </div>
             `)
             
-            document.querySelector(".chat-window .chat").insertAdjacentHTML("beforeend", `
-                <div class="loader"></div>
+            document.getElementById("main-chat").insertAdjacentHTML("beforeend", `
+                <div id="loader" class="loader"></div>
             `)
 
             const chat = model.startChat({ message });
 
-            document.querySelector(".chat-window .chat").insertAdjacentHTML("beforeend", `
+            document.getElementById("main-chat").insertAdjacentHTML("beforeend", `
                 <div class="model">
-                    <p class="bot-response"></p>
+                    <p class="bot-response" id="last-response"></p>
                 </div>
             `)
 
@@ -45,16 +44,16 @@ async function sendMessage() {
             let buffer = ""
 
             // sélectionne la dernière réponse
-            const modelMessages = document.querySelectorAll(".chat-window .chat div.model");
-            const lastResponse = modelMessages[modelMessages.length - 1].querySelector(".bot-response");
+            // const modelMessages = document.querySelectorAll(".chat-window .chat div.model");
+            // const lastResponse = modelMessages[modelMessages.length - 1].querySelector(".bot-response");
 
+            const lastResponse = document.getElementById("last-response")
             // lit le stream chunk par chunk
             for await (const chunk of result.stream) {
                 buffer += chunk.text();
 
                 // parse markdown → html
                 lastResponse.innerHTML = marked.parse(buffer);
-                console.log(buffer)
 
                 lastResponse.scrollIntoView({ behavior: "smooth", block: "end" });
             }
@@ -70,20 +69,24 @@ async function sendMessage() {
             });
 
         } catch (error) {
-            document.querySelector(".chat-window .chat").insertAdjacentHTML("beforeend", `
+            document.getElementById("main-chat").insertAdjacentHTML("beforeend", `
                 <div class="error">
                     <p>The message could not be sent. Please try again.</p>
                 </div>
             `);
-        }
-
+        } finally {
         // retire loader
-        document.querySelector(".chat-window .chat .loader").remove();
+            const loader = document.getElementById("loader");
+            if (loader) loader.remove();
+        }
 
     };
 }
 
-sent.addEventListener("click", () => sendMessage());
+sent.addEventListener("click", () => {
+    const userMessage = document.getElementById("user-Input").value; 
+    sendMessage(userMessage)
+});
 
 document.querySelector(".chat-button")
 .addEventListener("click", () => {
@@ -95,6 +98,10 @@ document.querySelector(".chat-window button.close")
     document.querySelector("body").classList.remove("chat-open")
 })
 
-document.getElementById("add button").addEventListener("click", () => {
+document.getElementById("add-button").addEventListener("click", () => {
     document.getElementById("upload").click()
+})
+
+document.getElementById("full-screen").addEventListener("click", () => {
+    document.getElementById("screen").click()    
 })

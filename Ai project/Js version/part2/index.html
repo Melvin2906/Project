@@ -11,21 +11,27 @@
 </head>
 <body>
     <section class="chat-window">
-        <button class="close">x close</button>
-        <div class="chat">
-            <div class="model">
+        <div class="header">
+            <button class="full-screen" id="full-screen">
+                <img src="full-screen.png" alt="full">
+                <a id="screen" href="full-screen.html" style="display:none"></a>
+            </button>
+            <button class="close">x close</button>
+        </div>
+        <div id="main-chat" class="chat">
+            <div id="model-message" class="model">
                 <p>Hi, how can I help you ?</p>
             </div>
         </div>
         <div class="input-area">
-            <input placeholder="Ask me anything" type="text">
+            <input id="user-Input" placeholder="Ask me anything..." type="text">
 
             <!-- caché l'input -->
             <input type="file" id="upload" style="display:none" multiple>
-            <button id="add button">
+            <button id="add-button">
                 <img class="add" src="paper-clip.png" alt="add file">
             </button>
-            <button id="sent button">
+            <button id="sent-button">
                 <img src="send.png" alt="sent icone">
             </button>
         </div>

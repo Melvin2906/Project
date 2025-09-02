@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat - Full Screen</title>
+    <link rel="stylesheet" href="style2.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat" id="main-chat">
+            <div class="model">
+            </div>
+        </div>
+        <div class="input-area">
+            <input type="file" id="join" style="display: none;">
+            <button class="paper-clip" id="add-button">
+                <img src="paper-clip.png" alt="Attach file">
+            </button>
+            <textarea class="user-Input" is="textarea-autogrow" id="user-Input" placeholder="Ask anything..."></textarea>
+            <button class="send-icon" id="send-button">
+                <img src="send.png" alt="Send message">
+            </button>
+        </div>
+    </div>
+    
+    <script type="importmap">
+        {
+            "imports": {
+                "@google/generative-ai": "https://esm.run/@google/generative-ai"
+            }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script type="module" src="script2.js"></script>
+</body>
+</html>

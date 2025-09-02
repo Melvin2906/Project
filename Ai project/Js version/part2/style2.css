@@ -1,0 +1,63 @@
+body {
+    .chat-container {
+
+        .input-area {
+            border: none;
+            border-radius: 40px;
+            height: 50px;
+            background-color: rgb(137, 116, 221);
+            display: flex;
+            width: 500px;
+            justify-content: center;
+            align-items: center;
+
+            .paper-clip {
+                height: 40px;
+                width: 40px;
+                background-color: rgb(137, 116, 221);
+                border-radius: 100%;
+                border: none;
+                cursor: pointer;
+
+                img {
+                    width: 20px;
+                }
+            }
+            .user-Input {
+                width: 70%;
+                padding: 0px 25px;  
+                height: 20px;
+                background-color: rgb(137, 116, 221);
+                border: none;     /* même padding que ton input */
+                /* border: 1px solid #ccc;   ajoute une bordure comme un input */
+                border-radius: 30px;      /* coins arrondis */
+                font-size: 20px;
+                font-family: Arial, sans-serif;
+                resize: none;             /* empêche de redimensionner */
+                outline: none;
+                /* background-color: #eee;   même fond que ton input */
+                box-sizing: border-box;   /* prend en compte le padding dans la largeur */
+                transition: border-color 0.3s ease, background-color 0.3s ease;
+            }
+
+            textarea:focus {
+                border-color: #007bff;    /* effet focus bleu comme input moderne */
+                /* background-color: #fff;   petit effet clair au focus */
+            }
+
+            .send-icon {
+                height: 40px;
+                width: 40px;
+                border-radius: 100%;
+                background-color: rgb(137, 116, 221);
+                border: none;
+                cursor: pointer;
+
+                img {
+                    width: 20px;
+                }
+            }
+        }
+    }
+
+}
