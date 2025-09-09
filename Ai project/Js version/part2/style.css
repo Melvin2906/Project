@@ -81,17 +81,19 @@ body.chat-open {
     .chat {
         flex: 1;
         padding: 0 8px;
-        overflow-y: scroll;
+        overflow-y: auto;
+        position: end;
 
         p {
             border-radius: 20px;
-            width: 80%;
+            width: 70%;
             margin: 8px 0;
             font-size: 16px;
             padding: 16px;
         }
 
         div.model {
+            overflow-x: auto;
 
             p {
                 background-color: var(--grey);
@@ -117,6 +119,7 @@ body.chat-open {
             }
         }
     }
+}
 
     .input-area {
         height: 70px;
@@ -161,10 +164,7 @@ body.chat-open {
                 box-shadow: rgba(9, 9, 138, 0.25) 0px 3px 8px;
             }
         }
-
-        
     }
-}
 
 /* HTML: <div class="loader"></div> */
 .loader {

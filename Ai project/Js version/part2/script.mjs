@@ -2,10 +2,10 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const sent = document.getElementById("sent-button")
 //const fileInput = document.getElementById("add").files
-const API_KEY = "";
+const API_KEY = "AIzaSyCm9P53h7KciLiVf8iuwmGu72NJj05ugFU";
 const genAi = new GoogleGenerativeAI(API_KEY);
 const model = genAi.getGenerativeModel({ 
-    model: "gemini-2.5-pro",
+    model: "gemini-2.5-flash",
     // formater les réponse du chatbot avec:
     //systemInstruction: example
 })
@@ -44,10 +44,9 @@ export async function sendMessage(userMessage) {
             let buffer = ""
 
             // sélectionne la dernière réponse
-            // const modelMessages = document.querySelectorAll(".chat-window .chat div.model");
-            // const lastResponse = modelMessages[modelMessages.length - 1].querySelector(".bot-response");
+            const modelMessages = document.querySelectorAll(".chat-window .chat div.model");
+            const lastResponse = modelMessages[modelMessages.length - 1].querySelector(".bot-response");
 
-            const lastResponse = document.getElementById("last-response")
             // lit le stream chunk par chunk
             for await (const chunk of result.stream) {
                 buffer += chunk.text();

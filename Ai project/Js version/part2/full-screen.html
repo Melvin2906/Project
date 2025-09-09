@@ -10,20 +10,44 @@
     <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="chat-container">
-        <div class="chat" id="main-chat">
-            <div class="model">
+    <div class="main-IA">
+        <div class="slide-bar" id="side">
+            <button class="close-slidebar" id="close-side">
+                <img src="previous.png" alt="close">
+            </button>
+            <div class="chat-History"></div>
+            <div class="user-option-close" id="user-o" style="display: none;">
+                <button class="Setting-option" id="">Setting</button>
+                <button class="Profil" id="user-profil">Profil</button>
+                <button class="logout"  id="logout-bttn">Logout</button>
+            </div>
+            <div class="setting">
+                <button class="user-changment" id="open-u" testid="right"></button>
             </div>
         </div>
-        <div class="input-area">
-            <input type="file" id="join" style="display: none;">
-            <button class="paper-clip" id="add-button">
-                <img src="paper-clip.png" alt="Attach file">
+        <div class="reduct" id="reduct" style="display: none;">
+            <button class="extend-slidebar" id="extend">
+                <img src="right-arrows.png" alt="extend">
             </button>
-            <textarea class="user-Input" is="textarea-autogrow" id="user-Input" placeholder="Ask anything..."></textarea>
-            <button class="send-icon" id="send-button">
-                <img src="send.png" alt="Send message">
-            </button>
+            <div class="chat-History"></div>
+            <div class="setting">
+            </div>
+        </div>
+        <div class="chat-container">
+            <div class="chat" id="main-chat">
+                <div class="model" id="chat-answer">
+                </div>
+            </div>
+            <div class="input-area">
+                <input type="file" id="join" style="display: none;">
+                <button class="paper-clip" id="add-button">
+                    <img src="paper-clip.png" alt="Attach file">
+                </button>
+                <textarea class="user-Input" rows="2" is="textarea-autogrow" id="user-Input" placeholder="Ask anything..."></textarea>
+                <button class="send-icon" id="send-button">
+                    <img src="send.png" alt="Send message">
+                </button>
+            </div>
         </div>
     </div>
     
@@ -35,6 +59,6 @@
         }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script type="module" src="script2.js"></script>
+    <script type="module" src="script2.mjs"></script>
 </body>
 </html>
