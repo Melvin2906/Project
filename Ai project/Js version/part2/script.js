@@ -2,7 +2,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const sent = document.getElementById("sent-button")
 //const fileInput = document.getElementById("add").files
-const API_KEY = "AIzaSyCm9P53h7KciLiVf8iuwmGu72NJj05ugFU";
+const API_KEY = "";
 const genAi = new GoogleGenerativeAI(API_KEY);
 const model = genAi.getGenerativeModel({ 
     model: "gemini-2.5-flash",
