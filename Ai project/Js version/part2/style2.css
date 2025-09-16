@@ -11,6 +11,9 @@
 }
 
 body {
+    padding: 0%;
+    margin: 0%;
+
     .main-IA {
         display: flex;
         height: 98vh;
@@ -119,87 +122,95 @@ body {
             }
         }
 
-        .chat-container {
+        .main-message-input-container {
+            margin-left: 10%;
+            margin-right: 10%;
+            width: 80%;
             display: flex;
             flex-direction: column;
-            width: 100%;
-            overflow-y: auto;
 
-            .chat {
-                flex: 1;
-                padding: 20px;
+            .chat-container {
                 display: flex;
                 flex-direction: column;
-                gap: 16px;
+                height: 90vh;
+                overflow-y: auto;
 
-                p {
-                    border-radius: 20px;
-                    width: 70%;
-                    margin: 8px 0;
-                    font-size: 16px;
-                    padding: 16px;
-                }
+                .chat {
+                    flex: 1;
+                    padding: 20px;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 16px;
 
-                div.model {
-                    align-self: flex-start;
-                    overflow-x: auto;
                     p {
-                        background-color: transparent;
+                        border-radius: 20px;
+                        width: 70%;
+                        margin: 8px 0;
+                        font-size: 16px;
+                        padding: 16px;
                     }
 
-                    .copy-model {
-                        height: 30px;
-                        width: 30px;
-                        border-radius: 100%;
-                        background: transparent;
-                        border: none;
-                        cursor: pointer;
-
-                        img {
-                            width: 20px;
-                            height: 20px;
+                    div.model {
+                        align-self: flex-start;
+                        overflow-x: auto;
+                        p {
+                            background-color: transparent;
                         }
-                    }
 
-                    .copy-model:hover {
-                        background: var(--grey-dark);
-                        width: 35px;
-                        height: 35px;
-                    } 
-                }
+                        .copy-model {
+                            height: 30px;
+                            width: 30px;
+                            border-radius: 100%;
+                            background: transparent;
+                            border: none;
+                            cursor: pointer;
 
-                div.user {
-                    align-self: flex-end;
-                    background-color: var(--blue);
-                    color: white;
-                    border-bottom-right-radius: 20px;
-                    border-bottom-left-radius: 20px;
-                    border-top-left-radius: 20px ;
-
-                    .copy-user {
-                        height: 30px;
-                        width: 30px;
-                        border-radius: 100%;
-                        background: transparent;
-                        border: none;
-                        cursor: pointer;
-                        margin-left: 70%;
-
-                        img {
-                            width: 20px;
-                            height: 20px;
+                            img {
+                                width: 20px;
+                                height: 20px;
+                            }
                         }
+
+                        .copy-model:hover {
+                            background: var(--grey-dark);
+                            width: 35px;
+                            height: 35px;
+                        } 
                     }
 
-                    .copy-user:hover {
-                        background: var(--grey-dark);
-                        width: 35px;
-                        height: 35px;
+                    div.user {
+                        align-self: flex-end;
+                        background-color: var(--blue);
+                        color: white;
+                        border-bottom-right-radius: 20px;
+                        border-bottom-left-radius: 20px;
+                        border-top-left-radius: 20px ;
+
+                        .copy-user {
+                            height: 30px;
+                            width: 30px;
+                            border-radius: 100%;
+                            background: transparent;
+                            border: none;
+                            cursor: pointer;
+                            margin-left: 70%;
+
+                            img {
+                                width: 20px;
+                                height: 20px;
+                            }
+                        }
+
+                        .copy-user:hover {
+                            background: var(--grey-dark);
+                            width: 35px;
+                            height: 35px;
+                        }
                     }
                 }
             }
             .input-area {
-            
+                
                 border: none;
                 border-radius: 40px;
                 height: 50px;

@@ -12,14 +12,13 @@ let messageHistory = {
     history: []
 };
 
-// Fonction pour envoyer un message
 async function sendMessage(userMessage) {
     if (!userMessage.trim()) return;
 
     try {
         // Réinitialiser l'input
         document.getElementById("user-Input").value = "";
-        
+
         // Ajouter le message de l'utilisateur
         document.getElementById("main-chat").insertAdjacentHTML("beforeend", `
             <div class="user">
@@ -27,52 +26,35 @@ async function sendMessage(userMessage) {
             </div>
         `);
 
-        // <button class="copy-user">
-        //     <img src="copy.png" alt="copy message">
-        // </button>
-
-        
         // Ajouter un indicateur de chargement
         document.getElementById("main-chat").insertAdjacentHTML("beforeend", `
             <div class="loader"></div>
         `);
 
-        // Démarrer la conversation avec l'historique
-        const chat = model.startChat({ history: messageHistory.history });
-        
         // Ajouter un conteneur pour la réponse
         document.getElementById("main-chat").insertAdjacentHTML("beforeend", `
             <div class="model">
                 <p class="bot-response"></p>
             </div>
         `);
-            // <button class="copy-model">
-            //     <img src="copy.png" alt="copy message">
-            // </button>
 
-
-        // Envoyer le message et recevoir un flux de réponse
-        let result = await chat.sendMessageStream(userMessage);
-        let buffer = "";
         const modelMessage = document.querySelectorAll(".main-IA .chat-container .chat div.model");
-        const lastResponse = modelMessage[modelMessage.length - 1].querySelector(".bot-response")
+        const lastResponse = modelMessage[modelMessage.length - 1].querySelector(".bot-response");
 
-        // Lire le flux chunk par chunk
-        for await (const chunk of result.stream) {
-            buffer += chunk.text();
-            lastResponse.innerHTML = marked.parse(buffer);
-            lastResponse.scrollIntoView({ behavior: "smooth", block: "end" });
+        // === ICI le fetch vers ton backend Python ===
+        let res = await fetch("http://127.0.0.1:5000/ask", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: userMessage })
+        });
+
+        let data = await res.json();
+
+        if (data.reply) {
+            lastResponse.innerHTML = marked.parse(data.reply);
+        } else {
+            lastResponse.innerHTML = `<p class="error">Erreur: ${data.error || "pas de réponse du serveur"}</p>`;
         }
-
-        // Mettre à jour l'historique
-        messageHistory.history.push({
-            role: "user",
-            parts: [{ text: userMessage }],
-        });
-        messageHistory.history.push({
-            role: "model",
-            parts: [{ text: buffer }],
-        });
 
     } catch (error) {
         console.error("Error:", error);
