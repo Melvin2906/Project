@@ -54,16 +54,33 @@ def draw_image(str_img):
     pygame.time.delay(3000)
 
 def first_step(score, num):
+    btn = Button("Next ->", WIDTH - 120, HEIGHT - 70, 100, 50)
     if num == 84:
         return False
     if score >= num:
-        if num == 1000:
-            draw_image("bottle3.png")
-        elif num == 330:
-            draw_image("bottle1.png")
-        elif num == 500:
-            draw_image("bottle2.jpg")
-        return "interface"
+        # Afficher l'image de récompense une seule fois
+        # Boucle d'attente pour le clic sur le bouton Next
+        waiting = True
+        while waiting:
+            for e in pygame.event.get():
+                if e.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if e.type == pygame.MOUSEBUTTONDOWN:
+                    if btn.rect.collidepoint(e.pos):
+                        return "interface"
+            screen.fill(BLACK)
+            if num == 1000:
+                draw_image("bottle(3).png")
+            elif num == 330:
+                draw_image("bottle(1).png")
+            elif num == 500:
+                draw_image("bottle(2).png")
+            else:
+                continue
+            btn.draw(screen)
+            pygame.display.flip()
+            pygame.time.delay(10)
     return False
 
 def interface():
@@ -94,7 +111,7 @@ def interface():
 def play_snake(lim):
     score = 0
     BLOCK_SIZE = 20
-    snake_speed = 10
+    snake_speed = 5
     snake_list = [[WIDTH // 2, HEIGHT // 2]]
     snake_direction = "RIGHT"
     food_x = random.randrange(0, WIDTH - BLOCK_SIZE, BLOCK_SIZE)
@@ -110,16 +127,25 @@ def play_snake(lim):
 
     running = True
     while running:
-        for event in pygame.event.get():
+        events = pygame.event.get()
+        for event in events:
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return
-                elif event.key == pygame.K_LEFT and snake_direction != "RIGHT": snake_direction = "LEFT"
-                elif event.key == pygame.K_RIGHT and snake_direction != "LEFT": snake_direction = "RIGHT"
-                elif event.key == pygame.K_UP and snake_direction != "DOWN": snake_direction = "UP"
-                elif event.key == pygame.K_DOWN and snake_direction != "UP": snake_direction = "DOWN"
+                elif event.key == pygame.K_LEFT and snake_direction != "RIGHT": 
+                    snake_direction = "LEFT"
+                    sprites["head"] = pygame.transform.scale(pygame.image.load(resource_path("assets/head_left.png")), (BLOCK_SIZE + 2, BLOCK_SIZE + 2))
+                elif event.key == pygame.K_RIGHT and snake_direction != "LEFT": 
+                    snake_direction = "RIGHT"
+                    sprites["head"] = pygame.transform.scale(pygame.image.load(resource_path("assets/head.png")), (BLOCK_SIZE + 2, BLOCK_SIZE + 2))
+                elif event.key == pygame.K_UP and snake_direction != "DOWN":
+                    snake_direction = "UP"
+                    sprites["head"] = pygame.transform.scale(pygame.image.load(resource_path("assets/head_up.png")), (BLOCK_SIZE + 2, BLOCK_SIZE + 2))
+                elif event.key == pygame.K_DOWN and snake_direction != "UP": 
+                    snake_direction = "DOWN"
+                    sprites["head"] = pygame.transform.scale(pygame.image.load(resource_path("assets/head_down.png")), (BLOCK_SIZE + 2, BLOCK_SIZE + 2))
 
         head_x, head_y = snake_list[0]
         if snake_direction == "UP": head_y -= BLOCK_SIZE
@@ -134,6 +160,7 @@ def play_snake(lim):
             score += 10
             food_x = random.randrange(0, WIDTH - BLOCK_SIZE, BLOCK_SIZE)
             food_y = random.randrange(0, HEIGHT - BLOCK_SIZE, BLOCK_SIZE)
+            if snake_speed < 10: snake_speed += (score / 50)
         else:
             snake_list.pop()
 
@@ -149,7 +176,7 @@ def play_snake(lim):
         screen.blit(score_text, (10, 10))
         if first_step(score, lim) == "interface":
             return interface()
-
+        
         pygame.display.update()
         clock.tick(snake_speed)
 
@@ -187,7 +214,8 @@ def play_subway(lim):
         screen.blit(background, (bg_x, 0))
         screen.blit(background, (bg_x + 800, 0))
 
-        for event in pygame.event.get():
+        events = pygame.event.get()
+        for event in events:
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.KEYDOWN:
@@ -253,6 +281,7 @@ def play_subway(lim):
 
         score_text = font.render(f"Score: {score} cl", True, BLACK)
         screen.blit(score_text, (10, 550))
+
         if first_step(score, lim) == "interface":
             return interface()
         pygame.display.update()
@@ -284,4 +313,3 @@ def menu():
                 elif buttons[3].rect.collidepoint(event.pos): pygame.quit(); sys.exit()
 
 menu()
-

@@ -26,7 +26,8 @@ print(response.text)
 # 406: Invalid response format
 # 429: Too many request
 # 500: Internal server error
-# 502 and 504: Ghatered problems
+# 502: Gateway problems
+# 504:  Gateway Time-out
 
 import json
 album = {"Dadju": "reine", "Niska": "Chasse à l'homme"}

@@ -5,7 +5,7 @@ from chat_bot_using_gemini import ChatBot
 
 # Charger la clé API
 config = ConfigParser()
-config.read("C:/Users/Utilisateur/Project/Ai project/Python version/Gemini.ini")
+config.read("Gemini.ini")
 api_key = config['gemini_ai']['API_KEY']
 
 # Initialiser le chatbot

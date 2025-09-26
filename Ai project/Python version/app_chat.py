@@ -6,7 +6,7 @@ from rich.console import Console
 
 def main():
     config = ConfigParser()
-    config.read("D:/API_KEY/Gemini_api.ini")
+    config.read("Gemini_api.ini")
     api_key = config['gemini_ai']['API_KEY']
 
     chatbot = ChatBot(api_key=api_key)
