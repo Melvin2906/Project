@@ -1,0 +1,11 @@
+def function(x):
+   """ High level description of function
+   
+   Additionnal detail on function
+
+   :parameter: description of parameter x
+   :return: description of return value
+
+   >> # Example funtion unstaged
+   Expected output of example function unstaged
+   """

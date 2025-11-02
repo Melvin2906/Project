@@ -1,0 +1,32 @@
+assert 'condition', lets to test if 'condition'is True
+if 'condition' is False, Python will raise an AssertionError
+
+
+
+pytest tests_ex.py -k "squared"
+meaning: please run the pytest framework using all tests from the tests_ex.py script containing "squared"
+
+
+@pytest.mark.skip (saute le teste)
+@pytest.mark.skipif(condition) (saute le texte si la condition est vraie)
+@pytest.mark.xfail (le test doit échoué mais l'output ne sera pas prise comme une erreur)
+
+
+
+_____________________________________________________________________________________________________________
+
+unitest in python
+in python to do unitest we use classes and define the unitest fonction in the classes
+we have:
+    - .assertEqual() and .assertNotEqual()
+    - .assertIs() and .assertIsNone()
+    - .assertTrue() and .assertFalse()
+    - .assertIsInstance() and .assertIn()
+    - .assertRaises()
+
+Run unittest:
+python3 -m unittest 'file name'
+python3 -m unittest -k "SomeStringOrPattern" 'file name' (like the -k of the pytest framework)
+python3 -m unittest -f 'file name' (fail fast flag)
+python3 -m unittest -c 'file name' (catch flag)
+python3 -m unittest -v 'file name' (verbose flag)

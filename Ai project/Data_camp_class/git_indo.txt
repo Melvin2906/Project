@@ -1,0 +1,14 @@
+Créer un nouveau repo avec "git init [name of our project]"
+Créer un repo git avec un repo existant: "taper la commande git init à l'intérieur du repo à convertir en repo git"
+git diff / git diff --staged
+git log --since"(date)"
+git diff [hash1] [hash2]
+git diff HEAD~1 HEAD (les deux derniers)
+git revert
+git restore --staged [file name] ==> unstaged a file
+On peut avoir une fonction dans une autre fonction en python
+
+combinaisons((datastructure), "number of element by tuple")
+
+
+import this

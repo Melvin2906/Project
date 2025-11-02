@@ -6,3 +6,5 @@ Les pièces:
    + 2 Fous
    + 2 Cavaliers
    + 8 pions
+
+python -m PyInstaller --onefile --noconsole --icon=ae31c8133ba753a0fd618a50bf78f56d.ico .\spotify-like.py

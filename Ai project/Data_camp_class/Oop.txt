@@ -1,0 +1,9 @@
+ratio = 12 / 8
+
+# List all attributes and methods for the ratio object
+print(dir(ratio))
+
+
+Object of the child class are also confidered as object of the parent class in python
+
+use def __repr__(): (help to print a class élément without calling them at once)

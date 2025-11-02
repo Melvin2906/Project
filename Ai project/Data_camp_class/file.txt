@@ -1,0 +1,15 @@
+There was an error in your code
+The error comes from the following part of the code:
+
+if df_urb_pop['CountryCode'] == 'CEB':
+    df_pop_ceb = df_urb_pop['CountryCode']
+What is the issue?
+
+The problem here is that you're trying to use an if statement to check if a Series (which is what df_urb_pop['CountryCode'] returns) is equal to a single value ('CEB'). In pandas, this comparison returns another Series of boolean values, which cannot be directly evaluated in an if statement. This is why you're seeing the error about the truth value of a Series being ambiguous.
+
+How do you fix it?
+
+To fix this, you should use boolean indexing instead of an if statement. You want to select the rows where the 'CountryCode' is equal to 'CEB' directly. Here's how you can do that:
+
+df_pop_ceb = df_urb_pop[df_urb_pop['CountryCode'] == 'CEB']
+This line will create a new DataFrame df_pop_ceb that contains only the rows where the 'CountryCode' is 'CEB'.
