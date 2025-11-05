@@ -6,4 +6,4 @@ print(dir(ratio))
 
 Object of the child class are also confidered as object of the parent class in python
 
-use def __repr__(): (help to print a class élément without calling them at once)
+use def __repr__(): (help to print all of a class elements without calling them at once)

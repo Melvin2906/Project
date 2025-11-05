@@ -8,3 +8,15 @@ Les pièces:
    + 8 pions
 
 python -m PyInstaller --onefile --noconsole --icon=ae31c8133ba753a0fd618a50bf78f56d.ico .\spotify-like.py
+
+
+
+
+
+a = 0
+if self.color == "white" and abs(self.Move_x) < 7:
+    a += y1
+    self.Move_x += a
+elif self.color == "black" and abs(self.Move_y) < 7:
+    a -= y1
+    self.Move_y += a
