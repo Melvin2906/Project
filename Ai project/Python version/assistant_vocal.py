@@ -31,7 +31,7 @@ def recognize_speech():
         
         try:
             audio = recognizer.listen(source)
-            command = recognizer.recognize_google(audio, language="fr-FR")
+            command = recognizer.recognize_google(audio, language="en-EN")
             print(f"Vous avez dit: {command}")
             return command.lower()
         except sr.UnknownValueError:
@@ -52,7 +52,7 @@ def in_word(words, cmd):
 # Fonction pour exécuter des commandes vocales
 def execute_command():
     cmd = recognize_speech()
-    order = ["joue", "cherche", "play", "lance", "find"]
+    order = ["joue", "cherche", "play", "lance", "find", "search"]
     order2 = ["mets-toi en veille", "repose toi", "ferme", "quit", "exit", "c'est bon tu me saoules"]
     verif, its = in_word(order, cmd)
     verif2 = in_word(order2, cmd)

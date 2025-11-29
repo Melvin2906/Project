@@ -1,17 +1,3 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
-
-// Configuration de l'API
-const API_KEY = "";
-const genAi = new GoogleGenerativeAI(API_KEY);
-const model = genAi.getGenerativeModel({ 
-    model: "gemini-2.5-pro",
-});
-
-// Historique des messages
-let messageHistory = {
-    history: []
-};
-
 async function sendMessage(userMessage) {
     if (!userMessage.trim()) return;
 
@@ -41,7 +27,7 @@ async function sendMessage(userMessage) {
         const modelMessage = document.querySelectorAll(".main-IA .chat-container .chat div.model");
         const lastResponse = modelMessage[modelMessage.length - 1].querySelector(".bot-response");
 
-        // === ICI le fetch vers ton backend Python ===
+        // === ICI le fetch vers le backend Python ===
         let res = await fetch("http://127.0.0.1:5000/ask", {
             method: "POST",
             headers: { "Content-Type": "application/json" },

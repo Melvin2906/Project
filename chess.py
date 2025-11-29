@@ -2,6 +2,7 @@ import pygame
 import time
 import random
 
+
 class King:
     """ 
     King classes stand for the king's piece in chess
@@ -15,9 +16,10 @@ class King:
         :__eq__ (==) method: to see if a piece have been eat or not
 
     """
-    def __init__(self, x=0, y=0, id=0):
+    def __init__(self, x=0, y=0, color="white", id=0):
         self.pos = [x, y]
         self.id = id
+        self.color = color
 
     def move(self, x1, y1):
         if x1 != self.pos[0]:
@@ -48,9 +50,22 @@ class King:
         return string
 
 class Queen:
-    def __init__(self, x=0, y=0, id=0):
+    """ 
+    Queen classes stand for the queen's piece in chess
+       
+        :x attribute: x position of the piece
+        :y attribute: y position of the piece
+        :color attribute: color of the piece
+        :id attribute: id of the piece
+    
+        :move method: for the piece deplacements
+        :__eq__ (==) method: to see if a piece have been eat or not
+
+    """
+    def __init__(self, x=0, y=0, id=0, color="white"):
         self.pos = [x, y]
         self.id = id
+        self.color=color
     
     def move(self, x1, y1):
         if ((1 <= x1 <= 8) and (1 <= y1 <= 8)):
@@ -66,9 +81,29 @@ class Queen:
         return string
 
 class Knight:
-    def __init__(self, x=0, y=0, id=0):
+    """ 
+    Knight classes stand for the knight's piece in chess
+       
+        :x attribute: x position of the piece
+        :y attribute: y position of the piece
+        :color attribute: color of the piece
+        :id attribute: id of the piece
+    
+        :move method: for the piece deplacements
+        :__eq__ (==) method: to see if a piece have been eat or not
+
+    """
+    def __init__(self, x=0, y=0, id=0, color="white"):
         self.pos = [x, y]
         self.id = id
+        self.color=color
+    
+    def move(self, x1=0, y1=0):
+        if (((x1 in (self.pos[0]-2, self.pos[0]+2)) and (y1 not in (self.pos[1]-1, self.pos[1]+1)))
+            or ((y1 in (self.pos[1]-2, self.pos[1]+2)) and (x1 not in (self.pos[0]-1, self.pos[0]+1)))):
+            print("You can't move your knight like that")
+        else:
+            self.pos = [x1, y1]
     
     def __repr__(self):
         string = f"""Knight:
@@ -77,9 +112,22 @@ class Knight:
         return string
 
 class Tower:
-    def __init__(self, x=0, y=0, id=0):
+    """ 
+    Tower classes stand for the tower's piece in chess
+       
+        :x attribute: x position of the piece
+        :y attribute: y position of the piece
+        :color attribute: color of the piece
+        :id attribute: id of the piece
+    
+        :move method: for the piece deplacements
+        :__eq__ (==) method: to see if a piece have been eat or not
+
+    """
+    def __init__(self, x=0, y=0, id=0, color="white"):
         self.pos = [x, y]
         self.id = id
+        self.color=color
     
     def move(self, x1, y1):
         if (x1 != self.pos[0] and y1 != self.pos[1]):
@@ -98,9 +146,22 @@ class Tower:
         return string
 
 class Bishop:
-    def __init__(self, x=0, y=0, id=0):
+    """ 
+    Bishop classes stand for the bishop's piece in chess
+       
+        :x attribute: x position of the piece
+        :y attribute: y position of the piece
+        :color attribute: color of the piece
+        :id attribute: id of the piece
+    
+        :move method: for the piece deplacements
+        :__eq__ (==) method: to see if a piece have been eat or not
+
+    """
+    def __init__(self, x=0, y=0, id=0, color="white"):
         self.pos = [x, y]
         self.id = id
+        self.color=color
     
     def move(self, x1, y1):
         if (x1 == self.pos[0] or y1 == self.pos[1]):
@@ -131,36 +192,36 @@ class Pawn:
         :__eq__ (==) method: to see if a piece have been eat or not
 
     """
-    def __init__(self, x=0, y=0, color="white", id=0, x1=0, x2=0):
+    def __init__(self, x=0, y=0, color="white", id=0, img=""):
         dic = {"a":1, "b":2, "c":3, "d":4, "e":5, "f":6, "g":7, "h":8}
         self.pos = [x, y]
         self.color = color.lower()
         self.id = id
-        self.pos1 = [x1, x2]
+        self.img = img
 
-    def change_type(self, name):
+    def change_type(self, x1, y1, name):
         dic = {"queen": Queen, "knight":Knight, "tower":Tower, "bishop":Bishop}
-        if self.pos1[1] == 8 or self.pos1[1] == 1:
-            return dic[name.lower()](self.pos1[0], self.pos1[1], random.randint(10, 50))
+        if y1 == 8 or y1 == 1:
+            return dic[name.lower()](x1, y1, random.randint(10, 50))
     
-    def move(self):
-        if self.pos1[0] != self.pos[0]:
+    def move(self, x1, y1):
+        if x1 != self.pos[0]:
             print("\nYou can't move the pion horizontally\n")
         else:
-            if self.pos1[1] > 8 or self.pos1[1] < 1:
+            if y1 > 8 or y1 < 1:
                 print("\nPosition out of range, please choose an another 'y' coordinate\n")
             else:
-                if (self.color == "white" and self.pos1[1] < self.pos[1]) or (self.color == "black" and self.pos1[1] > self.pos[1]):
+                if (self.color == "white" and y1 < self.pos[1]) or (self.color == "black" and y1 > self.pos[1]):
                     print("\nYou can't move your pawn like this\n")
                 else:
-                    self.pos[1] = self.pos1[1]
+                    self.pos[1] = y1
     
     def __eq__(self, other):
         if isinstance(other, Pawn):
             # return self.pos[0] == other.pos[0] and self.pos[1], other.pos[1]
             if self.color == "white":
-                return (((self.pos1[1] == other.pos[0]) and (self.pos1[1] == other.pos[1]))
-                or ((self.pos1[1] == other.pos[0]) and (self.pos1[1] == other.pos[1])))
+                return ((((self.pos[0] + 1) == other.pos[0]) and ((self.pos[1] + 1) == other.pos[1]))
+                or (((self.pos[0] - 1) == other.pos[0]) and ((self.pos[1] + 1) == other.pos[1])))
             else:
                 return ((((self.pos[0] + 1) == other.pos[0]) and ((self.pos[1] - 1) == other.pos[1]))
                 or (((self.pos[0] - 1) == other.pos[0]) and ((self.pos[1] - 1) == other.pos[1])))
@@ -174,38 +235,54 @@ class Pawn:
     ID = {self.id}"""
         return string
 
-pion1 = Pawn(2, 5, "white", 0)
-print(pion1)
-pion1.move(2, 6)
-print(pion1)
-pion1.move(2, 7)
-print(pion1)
+def create_plato():
+    plaq = [[] for i in range(8)]
+    for i in range(8):
+        for j in range(8):
+            if i % 2 == 0:
+                if j % 2 == 0:
+                    plaq[i].append('0')
+                else:
+                    plaq[i].append('1')
+            else:
+                if j % 2 != 0:
+                    plaq[i].append('0')
+                else:
+                    plaq[i].append('1')
+    return plaq
 
-print("\n(-----------------^_^-------------------)\n")
-queen_n = pion1.change_type(2, 8, "tower")
-print(f"Transformation complete ! Congatulation, your pawn just evolve in a {type(queen_n)}, here is his stat: \n{queen_n}")
+lis = [[Tower(1, 1), Knight(2, 1), Bishop(3, 1), Queen(4, 1), King(5, 1), Bishop(6, 1), Knight(7, 1), Tower(8, 1)],
+       [Pawn(i, 2, "white") for i in range(1,9)],
+       [0 for i in range(8)],
+       [0 for i in range(8)],
+       [0 for i in range(8)],
+       [0 for i in range(8)],
+       [Pawn(i, 7, "black") for i in range(1,9)],
+       [Tower(1, 8, "black"), Knight(2, 8, "black"), Bishop(3, 8, "black"), Queen(4, 8, "black"), King(5, 8, "black"), Bishop(6, 8, "black"), Knight(7, 8, "black"), Tower(8, 8, "black")]]
 
-print("\n(-----------------^_^-------------------)\n")
+def add_pieces(plaq):
+    for i in range(len(lis)):
+        for j in range(len(lis[i])):
+            if (lis[i][j] == 0):
+                pass
+            else:
+                plaq[lis[i][j].pos[1] - 1][lis[i][j].pos[0] - 1] = lis[i][j]
 
-pion2 = Pawn(2, 7, "Black", 1)
-print(pion2)
-pion2.move(2, 8)
-print(f"Because of your behavior, the current stat of your pawn is still: \n{pion2}")
-
-pion3 = Pawn(2, 5, "White", 2)
-pion3.move(2, 4)
-print(f"Because of your behavior, the current stat of your pawn is still: \n{pion3}")
-
-print("\n(================^_^================)\n")
-queen_n.move(3, 2)
-print(queen_n)
-
-white_pawn = [Pawn(pawn+1, 2, "white", pawn) for pawn in range(8)]
-print("\n===================================================\nList des pions blancs\n")
-for i in white_pawn:
-    print(i)
-
-black_pawn = [Pawn(pawn+1, 2, "black", int((pow(pawn, 2) + 2)/0.5)) for pawn in range(8)]
-print("\n===================================================\nList des pions noirs\n")
-for i in black_pawn:
-    print(i)
+def print_pieces_and_plato(plaq):
+    for i in range(len(plaq)):
+        for j in range(len(plaq[i])):
+            if (type(plaq[i][j]) == Knight):
+                    print(" µ ", end=" ")
+            elif (type(plaq[i][j]) == Pawn):
+                print(" @ ", end=" ")
+            elif (type(plaq[i][j]) == Queen):
+                print(" $ ", end=" ")
+            elif (type(plaq[i][j]) == King):
+                print(" € ", end=" ")
+            elif (type(plaq[i][j]) == Bishop):
+                print(" £ ", end=" ")
+            elif (type(plaq[i][j]) == Tower):
+                print(" # ", end=" ")
+            else:
+                print(f" {plaq[i][j]} ", end=" ")
+        print()
