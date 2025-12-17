@@ -27,8 +27,16 @@ while run:
             pygame.quit()
             sys.exit()
     screen.fill(GREY)
+
     draw_plato()
-    print_pieces_and_plato(lis, screen, PIECES_SHAPE)
+    print_pieces_and_plato(lis, screen, PIECES_SHAPE, border=3, mouse_position=list(pygame.mouse.get_pos()))
     
     pygame.display.flip()
 
+def draw_pieces_with_circle(surface,color, x, y, border, mouse_position):
+    new_color = (0, 0, 0)
+    if ((x <= mouse_position[0] <= x + 10) and (y <= mouse_position[1] <= y + 10)):
+        pygame.draw.circle(surface, color, (x, y), 10)
+        pygame.draw.circle(surface, new_color, (x, y), 10, border)
+    else:
+        pygame.draw.circle(surface, color, (x, y), 10)
