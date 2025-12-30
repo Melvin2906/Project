@@ -14,18 +14,55 @@
 </head>
 <body>
     <div class="main-IA">
+        <div class="overlay" id="overlay">
+            <div class="setting-table">
+                <div class="side">
+                    <p class="head-set">
+                        <button class="close-setting-table" aria-label="close" id="close-setting-table">
+                            <span aria-hidden="true" class="sign">&times;</span>
+                        </button>
+                    </p>
+                    <p class="navigation-option">
+                        <button>General</button>
+                        <button>Notifications</button>
+                        <button>Personalization</button>
+                        <button>Apps</button>
+                        <button>Data Control</button>
+                        <button>Security</button>
+                        <button>Parental control</button>
+                        <button>Account</button>
+                    </p>
+                </div>
+                <div class="show-user-option">Hiiiiii
+                    <label for="color-picker">Change the paragraph color:</label>
+                    <input type="color" id="color-picker" value="#0000ff">
+                    <p id="target-text">This text will change color.</p>
+                </div>
+            </div>
+        </div>
+        <div class="profile-overlay" id="profile-overlay">
+            <div class="profil-option">
+                <button id="profile-overlay-close">X</button>
+                <button></button>
+                <button></button>
+                <button></button>
+                <button></button>
+            </div>
+        </div>
+        <div class="user-option-close" id="user-o" style="display: none;">
+            <div class="navigation-setting">
+                <button class="setting-option" id="set-but">Setting</button>
+                <button class="Profil" id="user-profil">Profil</button>
+                <button class="logout"  id="logout-bttn">Logout</button>
+            </div>
+        </div>
         <div class="slide-bar" id="side">
             <button class="close-slidebar" id="close-side">
                 <img src="previous.png" alt="close">
             </button>
             <div class="chat-History"></div>
-            <div class="user-option-close" id="user-o" style="display: none;">
-                <button class="Setting-option" id="">Setting</button>
-                <button class="Profil" id="user-profil">Profil</button>
-                <button class="logout"  id="logout-bttn">Logout</button>
-            </div>
             <div class="setting">
-                <button class="user-changment" id="open-u" testid="right"></button>
+                <button class="user-changment" id="open-u">X</button>
             </div>
         </div>
         <div class="reduct" id="reduct" style="display: none;">
@@ -33,7 +70,8 @@
                 <img src="right-arrows.png" alt="extend">
             </button>
             <div class="chat-History"></div>
-            <div class="setting">
+            <div class="user_reduct">
+                <button class="user-changment-reduct" id="show-option">X</button>
             </div>
         </div>
         <div class="main-message-input-container">
@@ -58,6 +96,7 @@
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
     <script src="script2.js"></script>
 </body>
 </html>

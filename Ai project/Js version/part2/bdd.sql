@@ -56,7 +56,7 @@ CREATE TABLE feedback (
     id INT AUTO_INCREMENT PRIMARY KEY,
     message_id INT NOT NULL,
     user_id INT,
-    rating TINYINT, -- 1 à 5
+    rating TINYINT,
     comment TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE CASCADE,
@@ -98,8 +98,8 @@ CREATE TABLE attachments (
     message_id INT NOT NULL,
     file_name VARCHAR(255) NOT NULL,
     file_type VARCHAR(50),
-    file_path VARCHAR(255) NOT NULL, -- chemin ou URL du fichier sur le serveur
-    file_size INT, -- taille en octets
+    file_path VARCHAR(255) NOT NULL,
+    file_size INT,
     uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE CASCADE
 );

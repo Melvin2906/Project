@@ -11,8 +11,6 @@ python -m PyInstaller --onefile --noconsole --icon=ae31c8133ba753a0fd618a50bf78f
 
 
 
-
-
 a = 0
 if self.color == "white" and abs(self.Move_x) < 7:
     a += y1

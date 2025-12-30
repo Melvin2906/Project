@@ -35,9 +35,21 @@ async function sendMessage(userMessage) {
         });
 
         let data = await res.json();
-
         if (data.reply) {
-            lastResponse.innerHTML = marked.parse(data.reply);
+            if (data.reply.includes("```")) {
+                // L’IA a envoyé du code → on affiche en texte
+                const pre = document.createElement("pre");
+                const code = document.createElement("code");
+
+                code.textContent = data.reply;
+                pre.appendChild(code);
+
+                lastResponse.innerHTML = "";
+                lastResponse.appendChild(pre);
+            } else {
+                // Texte normal → markdown autorisé
+                lastResponse.innerHTML = marked.parse(data.reply);
+            }
         } else {
             lastResponse.innerHTML = `<p class="error">Erreur: ${data.error || "pas de réponse du serveur"}</p>`;
         }
@@ -147,16 +159,37 @@ document.getElementById("close-side").addEventListener("click", () => {
 
 const open_u = document.getElementById("open-u");
 const user_o = document.getElementById("user-o");
+const show_option = document.getElementById("show-option");
 
-if (user_o.className == "user-option-close") {
-    open_u.addEventListener("click", () => {
-        user_o.style="display: yes;"
-        user_o.className = "user-option-open"
-    })
-} else {
-    open_u.addEventListener("click", () => {
-        user_o.style="display: none;"
-        user_o.className="user-option-close"
-        console.log(user_o.className)
-    })
+const toggleUserOptions = () => {
+    if (user_o.style.display === "none" || user_o.style.display === "") {
+        user_o.style.display = "block";
+        user_o.className = "user-option-open";
+    } else {
+        user_o.style.display = "none";
+        user_o.className = "user-option-close";
+    }
 }
+
+open_u.addEventListener("click", toggleUserOptions);
+show_option.addEventListener("click", toggleUserOptions);
+
+const overlay = document.getElementById("overlay");
+
+document.getElementById("set-but").addEventListener("click", () => {
+    overlay.style.display = "block"
+})
+
+document.getElementById("close-setting-table").addEventListener("click", () => {
+    overlay.style.display = "none"
+})
+
+const profile_overlay = document.getElementById("profile-overlay");
+
+document.getElementById("user-profil").addEventListener("click", () => {
+    profile_overlay.style.display = "block"
+})
+
+document.getElementById("profile-overlay-close").addEventListener("click", () => {
+    profile_overlay.style.display = "none"
+})

@@ -19,6 +19,131 @@ body {
         height: 98vh;
         position: relative;
 
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 1000;
+
+            .setting-table {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 800px;
+                height: 600px;
+                background: rgb(237, 234, 234);
+                padding: 20px;
+                border-radius: 12px;
+                z-index: 1001;
+                padding: 0%;
+                flex-direction: row;
+                display: flex;
+                
+                .side {
+                    height: 99%;
+                    background: #1a1a1a;
+                    width: 25%;
+                    border-bottom-left-radius: 12px;
+                    border-top-left-radius: 12px;
+                    padding-left: 12px;
+                    padding-top: 5px;
+                    
+                    .head-set {
+
+                        .close-setting-table {
+                            height: 30px;
+                            width: 30px;
+                            border: none;
+                            background: transparent;
+                            border-radius: 25%;
+                            cursor: pointer;
+                            align-items: center;
+                            border-bottom: 1px solid var(--grey-light);
+                            margin-bottom: 20px;
+                        }
+
+                        .close-setting-table:hover {
+                            background: var(--blue);
+                        }
+                    }
+
+                    .navigation-option {
+                        margin-top: 10px;
+                        display: flex;
+                        flex-direction: column;
+                        width: 20%;
+
+                        button {
+                            height: 40px;
+                            width: 170px;
+                            margin-bottom: 2px;
+                            border: 0px;
+                            border-radius: 12px;
+                            background: transparent;
+                            border-bottom: 1px solid var(--grey-light);
+                        }
+
+                        button:hover {
+                            background-color: var(--blue);
+                        }
+                    }
+                }
+
+                .show-user-option {
+                    width: 75%;
+                }
+            }
+        }
+
+        .profile-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 1000;
+
+            .profil-option {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 600px;
+                height: 400px;
+                background: white;
+                padding: 20px;
+                border-radius: 12px;
+                z-index: 1001;
+            }
+        }
+
+        .user-option-open {
+            flex-direction: column;
+            background-color: transparent;
+            justify-content: space-between;
+            position: fixed;
+            z-index: 1000;
+
+            .setting-option {
+                display: flex;
+                border: none;
+                background-color: transparent;
+            }
+
+            .Profil {
+                display: flex;
+                border: none;
+                background-color: transparent;
+            }
+
+            .logout {
+                display: flex;
+                border: none;
+                background-color: transparent;
+            }
+        }
+
         .slide-bar {
             box-shadow: var(--shadow);
             width: 25%;
@@ -36,7 +161,6 @@ body {
                 margin: 15px;
                 border: none;
                 border-radius: 50%;
-                background: transparent;
                 cursor: pointer;
                 background: var(--grey-light);
 
@@ -45,6 +169,7 @@ body {
                     height: 16px;
                 }
             }
+
             .chat-History {
                 flex: 1;
                 padding: 10px;
@@ -68,6 +193,18 @@ body {
             .setting {
                 padding: 15px;
                 border-top: 1px solid var(--grey-light);
+
+                .user-changment {
+                    width: 90%;
+                    height: 50px;
+                    border: none;
+                    background: transparent;
+                    border-radius: 2%;
+                }
+
+                .user-changment:hover {
+                    background: var(--blue);
+                }
             }
 
             .setting-title {
@@ -76,12 +213,6 @@ body {
                 color: var(--primary-dark);
             }
 
-            .setting-option {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 12px;
-            }
 
             .close-slidebar:hover {
                 background: var(--primary-light);
@@ -115,6 +246,17 @@ body {
                     width: 16px;
                     height: 16px;
                 }
+            }
+
+            .user_reduct {
+                padding: 15px;
+                border-top: 1px solid var(--grey-light);
+            }
+
+            .user_reduct-title {
+                font-weight: 600;
+                margin-bottom: 10px;
+                color: var(--primary-dark);
             }
 
             .extend-slidebar:hover {
@@ -209,6 +351,7 @@ body {
                     }
                 }
             }
+
             .input-area {
                 
                 border: none;

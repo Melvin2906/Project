@@ -29,19 +29,19 @@ def get_db_connection():
 def ask():
     data = request.json
     user_message = data.get("message", "")
-    try:
-        # Stocker la question dans l’historique SQLite
-        if user_message:
-            conn = get_db_connection()
-            conn.execute("INSERT INTO history_fts (question) VALUES (?)", (user_message,))
-            conn.commit()
-            conn.close()
+    # try:
+    #     # Stocker la question dans l’historique SQLite
+    #     if user_message:
+    #         conn = get_db_connection()
+    #         conn.execute("INSERT INTO history_fts (question) VALUES (?)", (user_message,))
+    #         conn.commit()
+    #         conn.close()
 
-        # Renvoyer la réponse de Gemini
-        response = chatbot.send_prompt(user_message)
-        return jsonify({"reply": response})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    #     # Renvoyer la réponse de Gemini
+    response = chatbot.send_prompt(user_message)
+    return jsonify({"reply": response})
+    # except Exception as e:
+    #     return jsonify({"error": str(e)}), 500
 
 @app.route("/suggest", methods=["GET"])
 def suggest():

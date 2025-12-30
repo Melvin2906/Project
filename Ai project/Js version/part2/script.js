@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
+const api_key = document.getElementById("api-key").value
 const sent = document.getElementById("sent-button")
 //const fileInput = document.getElementById("add").files
 const API_KEY = "";

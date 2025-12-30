@@ -2,7 +2,16 @@ import pygame
 import time
 import random
 
-SHAPE = 50
+
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+GREY = pygame.Color("grey")
+RED = pygame.Color("red")
+BLUE = pygame.Color("blue")
+WIDTH, HEIGHT, SHAPE, PIECES_SHAPE = 900, 800, 50, 53
+flags = pygame.RESIZABLE
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+SHAPE_TWO = 50
 class King:
     """ 
     King classes stand for the king's piece in chess
@@ -268,26 +277,55 @@ def add_pieces(plaq):
             else:
                 plaq[lis[i][j].pos[1] - 1][lis[i][j].pos[0] - 1] = lis[i][j]
 
-def draw_pieces_with_circle(surface,color, x, y):
-    pygame.draw.circle(surface, color, (x, y), 10)
+def draw_plato(plaq=create_plato()):
+    for i in range(8):
+        for j in range(8):
+            if plaq[i][j] == "0":
+                pygame.draw.rect(screen, WHITE, ((i + 4) * SHAPE_TWO, (j + 4) * SHAPE_TWO, SHAPE_TWO, SHAPE_TWO))
+            else:
+                pygame.draw.rect(screen, BLACK, ((i + 4) * SHAPE_TWO, (j + 4) * SHAPE_TWO, SHAPE_TWO, SHAPE_TWO))
 
-def print_pieces_and_plato(lis, surface, shape):
+def draw_pieces_with_circle(surface,color, x, y, border, mouse_position):
+    new_color = (0, 0, 0)
+    if ((x <= mouse_position[0] <= x + 10) and (y <= mouse_position[1] <= y + 10)):
+        pygame.draw.circle(surface, color, (x, y), 10)
+        pygame.draw.circle(surface, new_color, (x, y), 10, border)
+    else:
+        pygame.draw.circle(surface, color, (x, y), 10)
+
+def determine_type(element):
+    li = [King, Queen, Tower, Bishop, Pawn, Knight]
+
+    for j in li:
+        if (type(element) == j):    
+            b = 0
+            break
+        else:
+            b = 1
+    return b
+
+# for i in lis:
+#     for j in i:
+#         print(determine_type(j))
+
+
+def print_pieces_and_plato(lis, surface, shape, border, mouse_position):
     for i in range(len(lis)):
         for j in range(len(lis[i])):
             if (type(lis[i][j]) == Knight):
-                draw_pieces_with_circle(surface, pygame.Color("blue"), (j + 4) * shape, (i + 4) * shape)
+                draw_pieces_with_circle(surface, pygame.Color("blue"), (j + 4) * shape, (i + 4) * shape, border, mouse_position)
             elif (type(lis[i][j]) == Pawn):
                 if lis[i][j].color == "black":
-                    draw_pieces_with_circle(surface, pygame.Color("brown"), (j + 4) * shape, (i + 4) * shape)
+                    draw_pieces_with_circle(surface, pygame.Color("brown"), (j + 4) * shape, (i + 4) * shape, border, mouse_position)
                 else :
-                    draw_pieces_with_circle(surface, pygame.Color("yellow"), (j + 4) * shape, (i + 4) * shape)
+                    draw_pieces_with_circle(surface, pygame.Color("yellow"), (j + 4) * shape, (i + 4) * shape, border, mouse_position)
             elif (type(lis[i][j]) == Queen):
-                draw_pieces_with_circle(surface, pygame.Color("green"), (j + 4) * shape, (i + 4) * shape)
+                draw_pieces_with_circle(surface, pygame.Color("green"), (j + 4) * shape, (i + 4) * shape, border, mouse_position)
             elif (type(lis[i][j]) == King):
-                draw_pieces_with_circle(surface, pygame.Color("purple"), (j + 4) * shape, (i + 4) * shape)
+                draw_pieces_with_circle(surface, pygame.Color("purple"), (j + 4) * shape, (i + 4) * shape, border, mouse_position)
             elif (type(lis[i][j]) == Bishop):
-                draw_pieces_with_circle(surface, pygame.Color("pink"), (j + 4) * shape, (i + 4) * shape)
+                draw_pieces_with_circle(surface, pygame.Color("pink"), (j + 4) * shape, (i + 4) * shape, border, mouse_position)
             elif (type(lis[i][j]) == Tower):
-                draw_pieces_with_circle(surface, pygame.Color("magenta"), (j + 4) * shape, (i + 4) * shape)
+                draw_pieces_with_circle(surface, pygame.Color("magenta"), (j + 4) * shape, (i + 4) * shape, border, mouse_position)
             else:
                 pass
