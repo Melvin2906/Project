@@ -1,11 +1,37 @@
-async function sendMessage(userMessage) {
-    if (!userMessage.trim()) return;
+const getUserTimeZone = () => Intl.DateTimeFormat().resolvedOptions().timeZone;
 
+document.getElementById("update-timezone").addEventListener("click", async () => {
+    const timezone = getUserTimeZone();
+
+    try {
+        const res = await fetch("http://127.0.0.1:5000/update-timezone", {         
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ timezone })
+        });
+
+        const data = await res.json();
+
+        console.log("Fuseau mis à jour :", data.timezone);
+
+    } catch (err) {
+        console.error("Erreur mise ) jour fuseau :", err);
+    }
+});
+
+async function sendMessage(userMessage) {
+    const fileInput = document.getElementById("join");
+    const file = fileInput.files[0] || null;
+
+    if (!userMessage.trim()) return;
+    
     try {
         // Réinitialiser l'input
         document.getElementById("user-Input").value = "";
 
         // Ajouter le message de l'utilisateur
+        // <img src="${file.name}" alt="try">
+
         document.getElementById("main-chat").insertAdjacentHTML("beforeend", `
             <div class="user">
                 <p>${userMessage}</p>
@@ -27,17 +53,29 @@ async function sendMessage(userMessage) {
         const modelMessage = document.querySelectorAll(".main-IA .chat-container .chat div.model");
         const lastResponse = modelMessage[modelMessage.length - 1].querySelector(".bot-response");
 
-        // === ICI le fetch vers le backend Python ===
-        let res = await fetch("http://127.0.0.1:5000/ask", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ message: userMessage })
-        });
+        let res;
+        if (file) {
+            const formData = new FormData();
+            formData.append("message", userMessage);
+            formData.append("image", file);
+
+            res = await fetch("http://127.0.0.1:5000/ask-image", {
+                method: "POST",
+                body: formData
+            });
+            fileInput.value = "";
+        } else {
+            res = await fetch("http://127.0.0.1:5000/ask", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: userMessage })
+            });
+        }
+
 
         let data = await res.json();
         if (data.reply) {
             if (data.reply.includes("```")) {
-                // L’IA a envoyé du code → on affiche en texte
                 const pre = document.createElement("pre");
                 const code = document.createElement("code");
 
@@ -47,7 +85,6 @@ async function sendMessage(userMessage) {
                 lastResponse.innerHTML = "";
                 lastResponse.appendChild(pre);
             } else {
-                // Texte normal → markdown autorisé
                 lastResponse.innerHTML = marked.parse(data.reply);
             }
         } else {
@@ -67,6 +104,13 @@ async function sendMessage(userMessage) {
         if (loader) loader.remove();
     }
 }
+
+document.getElementById("join").addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        console.log("Image sélectionnée :", file.name);
+    }
+});
 
 async function copyElementContentToClipboard(elementClass) {
     console.log("click")
@@ -88,7 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const sendButton = document.getElementById("send-button");
     const userInput = document.getElementById("user-Input");
     const userFile = document.getElementById("join").files
-    
+
     // Événement pour le bouton d'envoi
     sendButton.addEventListener("click", () => {
         const message = userInput.value.trim();
@@ -96,7 +140,7 @@ document.addEventListener("DOMContentLoaded", () => {
             sendMessage(message);
         }
     });
-    
+
     // Événement pour la touche Entrée
     userInput.addEventListener("keypress", (e) => {
         if (e.key === "Enter" && !e.shiftKey) {
@@ -178,18 +222,38 @@ const overlay = document.getElementById("overlay");
 
 document.getElementById("set-but").addEventListener("click", () => {
     overlay.style.display = "block"
+    document.getElementById("display-general").style.display = "block"
 })
 
+const click_to_display = () => {
+    const list = ["general", "notifications","personalization","apps","data-control","security","parental-control","account"];
+
+    list.forEach(id => {
+        document.getElementById(id).addEventListener("click", () => {
+            list.forEach(x => {
+                document.getElementById("display-" + x).style.display =
+                    x === id ? "block" : "none";
+            });
+        });
+    });
+}
+
 document.getElementById("close-setting-table").addEventListener("click", () => {
+    let list = ["notifications", "personalization", "apps", "data-control", "security", "parental-control", "account"];
+
+    for (let i = 0; i < list.length; i++) {
+        if (document.getElementById("display-" + list[i]).style.display === "block") {
+            document.getElementById("display-" + list[i]).style.display = "none"
+        }
+    }
     overlay.style.display = "none"
 })
 
-const profile_overlay = document.getElementById("profile-overlay");
-
 document.getElementById("user-profil").addEventListener("click", () => {
-    profile_overlay.style.display = "block"
+    overlay.style.display = "block"
+    document.getElementById("display-account").style.display = "block"
 })
 
-document.getElementById("profile-overlay-close").addEventListener("click", () => {
-    profile_overlay.style.display = "none"
-})
+
+// Pour gérer les bouton du setting pannel
+click_to_display()

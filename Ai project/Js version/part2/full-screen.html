@@ -13,6 +13,9 @@
 
 </head>
 <body>
+    <button id="update-timezone">
+        mettre a jour mon fuseau horaire
+    </button>
     <div class="main-IA">
         <div class="overlay" id="overlay">
             <div class="setting-table">
@@ -23,30 +26,44 @@
                         </button>
                     </p>
                     <p class="navigation-option">
-                        <button>General</button>
-                        <button>Notifications</button>
-                        <button>Personalization</button>
-                        <button>Apps</button>
-                        <button>Data Control</button>
-                        <button>Security</button>
-                        <button>Parental control</button>
-                        <button>Account</button>
+                        <button id="general">General</button>
+                        <button id="notifications">Notifications</button>
+                        <button id="personalization">Personalization</button>
+                        <button id="apps">Apps</button>
+                        <button id="data-control">Data Control</button>
+                        <button id="security">Security</button>
+                        <button id="parental-control">Parental control</button>
+                        <button id="account">Account</button>
                     </p>
                 </div>
-                <div class="show-user-option">Hiiiiii
-                    <label for="color-picker">Change the paragraph color:</label>
-                    <input type="color" id="color-picker" value="#0000ff">
-                    <p id="target-text">This text will change color.</p>
+                <div class="show-user-option">
+                    <label for="color-picker"></label>
+                    <input type="color" id="color-picker" style="display: none;" value="#0000ff">
+                    <div class="general-option-disp" id="display-general" style="display: none;">
+                        <h1 class="g-title">General</h1>
+                    </div>
+                    <div class="notifications-option-disp" id="display-notifications" style="display: none;">
+                        <h1 class="n-title">Notifications</h1>
+                    </div>
+                    <div class="personalization-option-disp" id="display-personalization" style="display: none;">
+                        <h1 class="p-title">Personalization</h1>
+                    </div>
+                    <div class="apps-option-disp" id="display-apps" style="display: none;">
+                        <h1 class="a-title">Apps</h1>
+                    </div>
+                    <div class="data-control-option-disp" id="display-data-control" style="display: none;">
+                        <h1 class="d-c-title">Data Control</h1>
+                    </div>
+                    <div class="security-option-disp" id="display-security" style="display: none;">
+                        <h1 class="s-title">Security</h1>
+                    </div>
+                    <div class="parental-control-option-disp" id="display-parental-control" style="display: none;">
+                        <h1 class="p-c-title">Parental Control</h1>
+                    </div>
+                    <div class="account-option-disp" id="display-account" style="display: none;">
+                        <h1 class="a-title">Account</h1>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <div class="profile-overlay" id="profile-overlay">
-            <div class="profil-option">
-                <button id="profile-overlay-close">X</button>
-                <button></button>
-                <button></button>
-                <button></button>
-                <button></button>
             </div>
         </div>
         <div class="user-option-close" id="user-o" style="display: none;">

@@ -34,10 +34,9 @@ body {
                 width: 800px;
                 height: 600px;
                 background: rgb(237, 234, 234);
-                padding: 20px;
-                border-radius: 12px;
-                z-index: 1001;
                 padding: 0%;
+                border-radius: 18px;
+                z-index: 1001;
                 flex-direction: row;
                 display: flex;
                 
@@ -45,8 +44,8 @@ body {
                     height: 99%;
                     background: #1a1a1a;
                     width: 25%;
-                    border-bottom-left-radius: 12px;
-                    border-top-left-radius: 12px;
+                    border-bottom-left-radius: 18px;
+                    border-top-left-radius: 18px;
                     padding-left: 12px;
                     padding-top: 5px;
                     
@@ -57,7 +56,7 @@ body {
                             width: 30px;
                             border: none;
                             background: transparent;
-                            border-radius: 25%;
+                            border-radius: 18%;
                             cursor: pointer;
                             align-items: center;
                             border-bottom: 1px solid var(--grey-light);
@@ -81,6 +80,7 @@ body {
                             margin-bottom: 2px;
                             border: 0px;
                             border-radius: 12px;
+                            text-align: start;
                             background: transparent;
                             border-bottom: 1px solid var(--grey-light);
                         }
@@ -93,28 +93,99 @@ body {
 
                 .show-user-option {
                     width: 75%;
+                    border-bottom-right-radius: 18px;
+                    border-top-right-radius: 18px;
+
+                    .general-option-disp {
+                        margin: 12px;
+                        display: flex;
+                        flex-direction: column;
+
+                        .g-title {
+                            font-size: 30px;
+                            border-bottom: 2px solid var(--grey-light);
+                            padding-bottom: 14px;
+                        }
+                    }
+                    .notifications-option-disp {
+                        margin: 12px;
+                        display: flex;
+                        flex-direction: column;
+
+                        .n-title {
+                            font-size: 30px;
+                            border-bottom: 2px solid var(--grey-light);
+                            padding-bottom: 14px;
+                        }
+                    }
+                    .personalization-option-disp {
+                        margin: 12px;
+                        display: flex;
+                        flex-direction: column;
+
+                        .p-title {
+                            font-size: 30px;
+                            border-bottom: 2px solid var(--grey-light);
+                            padding-bottom: 14px;
+                        }
+                    }
+                    .apps-option-disp {
+                        margin: 12px;
+                        display: flex;
+                        flex-direction: column;
+
+                        .a-title {
+                           font-size: 30px;
+                           border-bottom: 2px solid var(--grey-light);
+                           padding-bottom: 14px;
+                        }
+                    }
+                    .data-control-option-disp {
+                        margin: 12px;
+                        display: flex;
+                        flex-direction: column;
+
+                        .d-c-title {
+                            font-size: 30px;
+                            border-bottom: 2px solid var(--grey-light);
+                            padding-bottom: 14px;
+                        }
+                    }
+                    .security-option-disp {
+                        margin: 12px;
+                        display: flex;
+                        flex-direction: column;
+
+                        .s-title {
+                            font-size: 30px;
+                            /* font-family: monospace; */
+                            border-bottom: 2px solid var(--grey-light);
+                            padding-bottom: 14px;
+                        }
+                    }
+                    .parental-control-option-disp {
+                        margin: 12px;
+                        display: flex;
+                        flex-direction: column;
+
+                        .p-c-title {
+                            font-size: 30px;
+                            border-bottom: 2px solid var(--grey-light);
+                            padding-bottom: 14px;
+                        }
+                    }
+                    .account-option-disp {
+                        margin: 12px;
+                        display: flex;
+                        flex-direction: column;
+
+                        .a-title {
+                            font-size: 30px;
+                            border-bottom: 2px solid var(--grey-light);
+                            padding-bottom: 14px;
+                        }
+                    }
                 }
-            }
-        }
-
-        .profile-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.5);
-            display: none;
-            z-index: 1000;
-
-            .profil-option {
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                width: 600px;
-                height: 400px;
-                background: white;
-                padding: 20px;
-                border-radius: 12px;
-                z-index: 1001;
             }
         }
 
@@ -352,8 +423,7 @@ body {
                 }
             }
 
-            .input-area {
-                
+            .input-area {    
                 border: none;
                 border-radius: 40px;
                 height: 50px;
@@ -377,26 +447,26 @@ body {
                         width: 20px;
                     }
                 }
+
                 .user-Input {
                     width: 70%;
                     padding: 0px 25px;  
                     height: 20px;
                     background-color: rgb(137, 116, 221);
-                    border: none;     /* même padding que ton input */
-                    /* border: 1px solid #ccc;   ajoute une bordure comme un input */
-                    border-radius: 30px;      /* coins arrondis */
+                    border: none;
+                    border: 1px solid #ccc;
+                    border-radius: 30px;
                     font-size: 20px;
                     font-family: Arial, sans-serif;
-                    resize: none;             /* empêche de redimensionner */
+                    resize: none;
                     outline: none;
-                    /* background-color: #eee;   même fond que ton input */
-                    box-sizing: border-box;   /* prend en compte le padding dans la largeur */
+                    box-sizing: border-box;
+                    overflow-y: auto;
                     transition: border-color 0.3s ease, background-color 0.3s ease;
                 }
 
                 textarea:focus {
-                    border-color: #007bff;    /* effet focus bleu comme input moderne */
-                    /* background-color: #fff;   petit effet clair au focus */
+                    border-color: #007bff;
                 }
 
                 .send-icon {
