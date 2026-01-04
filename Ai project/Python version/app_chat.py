@@ -26,7 +26,8 @@ def main():
             responce = chatbot.send_prompt(user_input)
             console = Console()
             ...
-            response = chatbot.send_prompt(user_input)
+            context = chatbot.update_datetime("Africa/Benin")
+            response = chatbot.send_prompt(context + user_input)
             console.print(Markdown(response))
             #print(f"{chatbot.CHATBOT_NAME}: {responce}")
         except Exception as e:

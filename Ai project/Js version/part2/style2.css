@@ -11,13 +11,22 @@
 }
 
 body {
-    padding: 0%;
-    margin: 0%;
+    padding: 0;
+    margin: 0;
+    background: var(--black);
+    height: 100vh;
 
     .main-IA {
         display: flex;
         height: 98vh;
         position: relative;
+
+        #update-timezone {
+            display: block;
+            position: fixed;
+            z-index: 1001;
+            top: 20px;
+        }
 
         .overlay {
             position: fixed;
@@ -191,27 +200,27 @@ body {
 
         .user-option-open {
             flex-direction: column;
-            background-color: transparent;
+            background: #4e4e4e;
             justify-content: space-between;
             position: fixed;
-            z-index: 1000;
+            z-index: 1001;
+            top: 49%;
+            left: 2%;
+            border: 1px solid #eaeaed;
+            width: 250px;
+            height: 250px;
+            border-radius: 10px;
+            padding: 10px;
 
-            .setting-option {
+
+            button {
                 display: flex;
                 border: none;
                 background-color: transparent;
-            }
-
-            .Profil {
-                display: flex;
-                border: none;
-                background-color: transparent;
-            }
-
-            .logout {
-                display: flex;
-                border: none;
-                background-color: transparent;
+                margin-bottom: 10px;
+                width: 100%;
+                height: 50px;
+                font-size: 14px;
             }
         }
 
@@ -220,7 +229,6 @@ body {
             width: 25%;
             background-color: var(--grey-dark);
             overflow-y: auto;
-            z-index: 10;
             height: 100vh;
             display: flex;
             flex-direction: column;
@@ -297,10 +305,9 @@ body {
             overflow-y: auto;
             height: 100vh;
             background-color: var(--grey-dark);
-            flex-direction: column;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            z-index: 10;
 
             .extend-slidebar {
                 height: 36px;
@@ -320,14 +327,9 @@ body {
             }
 
             .user_reduct {
+                top: 1000px;
                 padding: 15px;
                 border-top: 1px solid var(--grey-light);
-            }
-
-            .user_reduct-title {
-                font-weight: 600;
-                margin-bottom: 10px;
-                color: var(--primary-dark);
             }
 
             .extend-slidebar:hover {
@@ -427,7 +429,7 @@ body {
                 border: none;
                 border-radius: 40px;
                 height: 50px;
-                background-color: rgb(137, 116, 221);
+                background-color: var(--grey-dark);
                 box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
                 display: flex;
                 width: 60%;
@@ -438,7 +440,7 @@ body {
                 .paper-clip {
                     height: 40px;
                     width: 40px;
-                    background-color: rgb(137, 116, 221);
+                    background-color: var(--grey-dark);
                     border-radius: 100%;
                     border: none;
                     cursor: pointer;
@@ -452,7 +454,7 @@ body {
                     width: 70%;
                     padding: 0px 25px;  
                     height: 20px;
-                    background-color: rgb(137, 116, 221);
+                    background: var(--grey-dark);
                     border: none;
                     border: 1px solid #ccc;
                     border-radius: 30px;
@@ -473,7 +475,7 @@ body {
                     height: 40px;
                     width: 40px;
                     border-radius: 100%;
-                    background-color: rgb(137, 116, 221);
+                    background-color: var(--grey-dark);
                     border: none;
                     cursor: pointer;
 

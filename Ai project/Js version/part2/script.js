@@ -7,19 +7,57 @@ const API_KEY = "";
 const genAi = new GoogleGenerativeAI(API_KEY);
 const model = genAi.getGenerativeModel({ 
     model: "gemini-2.5-flash",
+    systemInstruction: buildSystemInstruction()
     // formater les réponse du chatbot avec:
     //systemInstruction: example
 })
+
+function getUserTimeZone() { 
+    return Intl.DateTimeFormat().resolvedOptions().timeZone;
+}
+
+function getFormatteDate(timezone) {
+    const now = new Date();
+    const local = navigator.language || "en-US";
+
+    const formatter = new Intl.DateTimeFormat(local, {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        timeZone: timezone,
+        hour12: true
+    })
+
+    return formatter.format(now)
+}
+
+function buildSystemInstruction() {
+    const timezone = getUserTimeZone();
+    const dateStr = getFormatteDate(timezone)
+
+    return `
+Current date (provided by the application):
+${dateStr}
+User time zone: ${timezone}
+
+STRICT rules:
+- You have no direct access to the time or date
+- You only use the date provided above
+- You never attempt to access servers, metadata, or clocks
+- If time information is not provided, you state that you do not know it
+`;
+}
 
 let message = { 
     history: []
 }
 
 export async function sendMessage(userMessage) {
- 
-    console.log(message)
-
-    if (userMessage.length) {
+     if (userMessage.length) {
         try {
             document.getElementById("user-Input").value = "";
             document.getElementById("main-chat").insertAdjacentHTML("beforeend", `
@@ -39,6 +77,7 @@ export async function sendMessage(userMessage) {
                     <p class="bot-response" id="last-response"></p>
                 </div>
             `)
+
 
             // méthode pour donner l'impression au user que l'ia lui écrit plutôt que d'attendre tout le text
             let result = await chat.sendMessageStream(userMessage);

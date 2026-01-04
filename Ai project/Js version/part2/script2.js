@@ -11,7 +11,6 @@ document.getElementById("update-timezone").addEventListener("click", async () =>
         });
 
         const data = await res.json();
-
         console.log("Fuseau mis à jour :", data.timezone);
 
     } catch (err) {
@@ -223,6 +222,8 @@ const overlay = document.getElementById("overlay");
 document.getElementById("set-but").addEventListener("click", () => {
     overlay.style.display = "block"
     document.getElementById("display-general").style.display = "block"
+    user_o.style.display = "none"
+    user_o.className = "user-option-close"
 })
 
 const click_to_display = () => {
@@ -252,6 +253,8 @@ document.getElementById("close-setting-table").addEventListener("click", () => {
 document.getElementById("user-profil").addEventListener("click", () => {
     overlay.style.display = "block"
     document.getElementById("display-account").style.display = "block"
+    user_o.style.display = "none"
+    user_o.className = "user-option-close"
 })
 
 
