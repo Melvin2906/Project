@@ -9,7 +9,7 @@
 </head>
 <body>
     <div class="container" id="main">
-        <div class="sign-up">
+        <div class="sign-up" id="sign-up">
             <form action="#">
                 <h1>Create Account</h1>
                 <div class="social-container">
@@ -19,13 +19,13 @@
                 </div>
                 <p>or use your account</p>
                 <label for="" class="Name_label" style="display: none"></label>
-                <input type="text" name="txt" placeholder="Name" required="">
-                <input type="email" name="txt" placeholder="Email" required="">
-                <input type="password" name="txt" placeholder="Password" required="">
+                <input type="text" name="txt" placeholder="Name" id="name_input" required="">
+                <input type="email" name="txt" placeholder="Email" id="email_input" required="">
+                <input type="password" name="txt" placeholder="Password" id="passwd_input" required="">
                 <button>Sign Up</button>
             </form>
         </div>
-        <div class="sign-in">
+        <div class="sign-in" id="sign-in">
             <form action="#">
                 <h1>Sign in</h1>
                 <div class="social-container">
