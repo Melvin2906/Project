@@ -4,6 +4,6 @@ CREATE TABLE users (
     password_hash VARCHAR(256) NOT NULL,
     email VARCHAR(256) NOT NULL UNIQUE,
     hash_key VARCHAR(50) NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     last_login DATETIME,
 );
