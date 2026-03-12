@@ -11,7 +11,7 @@ app.use(cors())
 const db = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "",
+    password: "root",
     database: "login_info"
 })
 
@@ -25,6 +25,9 @@ db.connect(err => {
 
 app.post("/register", async (req, res) => {
     const { username, email, password } = req.body
+    if (!username || !email || !password) {
+        return;
+    }
     const hash = await bcrypt.hash(password, 10)
     const sql = `
         INSERT INTO users (username, email, password_hash)
@@ -43,7 +46,13 @@ app.post("/login", (req, res) => {
     const { email, password } = req.body
     const sql = "SELECT * FROM users WHERE email = ?"
     db.query(sql, [email], async (err, results) => {
-        if (err) return res.status(500).send("Database error")
+        if (err) {
+            console.error("DB Error:", err);
+            if (err.code === "DB Error:", err) {
+                return res.status(409).send("Username or Email already taken")
+            }
+            return res.status(500).send("Database error")
+        }
         if (results.length === 0) {
             return res.status(401).send("Invalid credentials")
         }
