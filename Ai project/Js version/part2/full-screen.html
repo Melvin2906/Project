@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <meta http-equiv="Content-Security-Policy" 
+      content="script-src 'self' https://esm.run https://cdn.jsdelivr.net 'unsafe-eval';"> -->
     <meta http-equiv="Content-Security-Policy" 
-      content="script-src 'self' https://esm.run https://cdn.jsdelivr.net 'unsafe-eval';">
+      content="script-src 'self' 'unsafe-inline' https://esm.run https://cdn.jsdelivr.net 'unsafe-eval';">
     <title>AI Chat - Full Screen</title>
-    <link rel="stylesheet" href="style2.css">
+    <link rel="stylesheet" href="style/style2.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
@@ -14,7 +16,6 @@
 </head>
 <body>
     <div class="main-IA">
-        <button id="update-timezone">update</button>
         <div class="overlay" id="overlay">
             <div class="setting-table">
                 <div class="side">
@@ -39,6 +40,12 @@
                     <input type="color" id="color-picker" style="display: none;" value="#0000ff">
                     <div class="general-option-disp" id="display-general" style="display: none;">
                         <h1 class="g-title">General</h1>
+                        <button if="appearance selection">Appearance</button>
+                        <button id="langage-selection">Language</button>
+                        <button id="on-focus-color">Accent color</button>
+                        <button id="langage-selection">Spoken language</button>
+                        <button id="update-timezone">Update timezone</button>
+                        <button id="voice-selection">Ai Voice</button>
                     </div>
                     <div class="notifications-option-disp" id="display-notifications" style="display: none;">
                         <h1 class="n-title">Notifications</h1>
@@ -73,7 +80,7 @@
         </div>
         <div class="slide-bar" id="side">
             <button class="close-slidebar" id="close-side">
-                <img src="previous.png" alt="close">
+                <img src="assets/previous.png" alt="close">
             </button>
             <div class="chat-History"></div>
             <div class="setting">
@@ -82,7 +89,7 @@
         </div>
         <div class="reduct" id="reduct" style="display: none;">
             <button class="extend-slidebar" id="extend">
-                <img src="right-arrows.png" alt="extend">
+                <img src="assets/right-arrows.png" alt="extend">
             </button>
             <div class="chat-History"></div>
             <div class="user_reduct">
@@ -98,20 +105,31 @@
             </div>
             <div class="input-area">
                 <audio src=""></audio>
-
                 <input type="file" id="join" style="display: none;">
                 <button class="paper-clip" id="add-button">
-                    <img src="paper-clip.png" alt="Attach file">
+                    <img src="assets/paper-clip.png" alt="Attach file">
+                </button>
+                <button class="mic-button" id="audio-part">
+                    <img src="assets/micro.png" alt="Voice input">
                 </button>
                 <textarea class="user-Input" rows="2" is="textarea-autogrow" id="user-Input" placeholder="Ask anything..."></textarea>
                 <button class="send-icon" id="send-button">
-                    <img src="send.png" alt="Send message">
+                    <img src="assets/send.png" alt="Send message">
                 </button>
             </div>
+        </div>
+        <div class="signup_and_signin" id="buttons-up-in">
+            <button class="LogIn" id="sign-in" style="display: block;">Log In
+                <a id="login-interface" href="login_signup/login_signup.html" target="_blank" style="display: none;"></a>
+            </button>
+            <button class="SignUp" id="sign-up" style="display: block;">Sign up
+                <a id="signup-interface" href="login_signup/login_signup.html" target="_blank" style="display: none;"></a>
+            </button>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
-    <script src="script2.js"></script>
+    <script src="src/script2.js" type="module"></script>
+    <script src="src/speech-part.js" type="module"></script>
 </body>
 </html>

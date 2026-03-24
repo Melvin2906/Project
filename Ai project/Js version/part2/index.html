@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
@@ -14,7 +14,7 @@
         <input class="api-key" type="text" id="api-key" placeholder="Enter a valid api-key" style="display:none">
         <div class="header">
             <button class="full-screen" id="full-screen">
-                <img src="full-screen.png" alt="full">
+                <img src="assets/full-screen.png" alt="full">
                 <a id="screen" href="full-screen.html" target="_blank" style="display:none"></a>
             </button>
             <button class="close">x close</button>
@@ -31,16 +31,16 @@
             <!-- caché l'input -->
             <input type="file" id="upload" style="display:none" multiple>
             <button id="add-button">
-                <img class="add" src="paper-clip.png" alt="add file">
+                <img class="add" src="assets/paper-clip.png" alt="add file">
             </button>
             <button id="sent-button">
-                <img src="send.png" alt="sent icone">
+                <img src="assets/send.png" alt="sent icone">
             </button>
         </div>
     </section>
 
     <div class="chat-button">
-        <img src="ai.png" alt="">
+        <img src="assets/ai.png" alt="">
     </div>
 
     <script type="importmap">
@@ -51,7 +51,7 @@
         }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script type="module" src="script.js"></script>
+    <script type="module" src="src/script.js"></script>
     <!-- <script src="suggestion.js"></script> -->
 </body>
 </html>

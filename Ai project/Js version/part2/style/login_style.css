@@ -22,7 +22,7 @@ body {
     width: 768px;
     max-width: 100%;
     min-height: 480px;
-    background: #fff;
+    background: #f6f5f7;
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 14px 28px rgba(0,0,0,0.25),
@@ -97,7 +97,6 @@ a {
 
 button {
     color: #fff;
-    background: #353dad;
     font-size: 12px;
     font-weight: bold;
     padding: 12px 55px;
@@ -109,6 +108,10 @@ button {
     text-transform: uppercase;
     transition: transform 80s ease-in;
     cursor: pointer;
+}
+
+#sign-in, #sign-up {
+    background: linear-gradient(to right, #3324c2, #6e9edd);
 }
 
 button:active {

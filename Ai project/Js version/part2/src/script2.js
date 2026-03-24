@@ -22,18 +22,16 @@ async function sendMessage(userMessage) {
     const fileInput = document.getElementById("join");
     const file = fileInput.files[0] || null;
 
-    if (!userMessage.trim()) return;
+    if (!userMessage.trim()) return null; // Return null for empty messages
     
     try {
         // Réinitialiser l'input
         document.getElementById("user-Input").value = "";
 
         // Ajouter le message de l'utilisateur
-        // <img src="${file.name}" alt="try">
-
         document.getElementById("main-chat").insertAdjacentHTML("beforeend", `
             <div class="user">
-                <p>${userMessage}</p>
+                <p>${escapeHtml(userMessage)}</p>
             </div>
         `);
 
@@ -53,6 +51,8 @@ async function sendMessage(userMessage) {
         const lastResponse = modelMessage[modelMessage.length - 1].querySelector(".bot-response");
 
         let res;
+        let responseData;
+        
         if (file) {
             const formData = new FormData();
             formData.append("message", userMessage);
@@ -71,37 +71,49 @@ async function sendMessage(userMessage) {
             });
         }
 
-
         let data = await res.json();
+        let replyText = "";
+        
         if (data.reply) {
+            replyText = data.reply;
             if (data.reply.includes("```")) {
                 const pre = document.createElement("pre");
                 const code = document.createElement("code");
-
                 code.textContent = data.reply;
                 pre.appendChild(code);
-
                 lastResponse.innerHTML = "";
                 lastResponse.appendChild(pre);
             } else {
                 lastResponse.innerHTML = marked.parse(data.reply);
             }
         } else {
-            lastResponse.innerHTML = `<p class="error">Erreur: ${data.error || "pas de réponse du serveur"}</p>`;
+            replyText = `Error: ${data.error || "No response from server"}`;
+            lastResponse.innerHTML = `<p class="error">${replyText}</p>`;
         }
+        
+        return replyText; // Return the response for speech
 
     } catch (error) {
         console.error("Error:", error);
+        const errorMsg = "The message could not be sent. Please try again.";
         document.getElementById("main-chat").insertAdjacentHTML("beforeend", `
             <div class="error">
-                <p>The message could not be sent. Please try again.</p>
+                <p>${errorMsg}</p>
             </div>
         `);
+        return errorMsg;
     } finally {
         // Retirer l'indicateur de chargement
         const loader = document.querySelector(".loader");
         if (loader) loader.remove();
     }
+}
+
+// Add this helper function to prevent XSS
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }
 
 document.getElementById("join").addEventListener("change", (e) => {
@@ -258,5 +270,18 @@ document.getElementById("user-profil").addEventListener("click", () => {
 })
 
 
+const signIn = document.getElementById('sign-in');
+const signUp = document.getElementById('sign-up');
+
+signIn.addEventListener('click', () => {
+    document.getElementById('login-interface').click();
+})
+
+signUp.addEventListener('click', () => {
+    document.getElementById('signup-interface').click();
+})
+
 // Pour gérer les bouton du setting pannel
 click_to_display()
+
+export { sendMessage }

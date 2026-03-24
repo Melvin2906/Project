@@ -21,13 +21,6 @@ body {
         height: 98vh;
         position: relative;
 
-        #update-timezone {
-            display: block;
-            position: fixed;
-            z-index: 1001;
-            top: 20px;
-        }
-
         .overlay {
             position: fixed;
             inset: 0;
@@ -92,6 +85,7 @@ body {
                             text-align: start;
                             background: transparent;
                             border-bottom: 1px solid var(--grey-light);
+                            cursor: pointer;
                         }
 
                         button:hover {
@@ -115,6 +109,24 @@ body {
                             border-bottom: 2px solid var(--grey-light);
                             padding-bottom: 14px;
                         }
+
+                        button {
+                            border: none;
+                            border-radius: 12px;
+                            width: 100%;
+                            background-color: transparent;
+                            height: 60px;
+                            border-bottom: 2px solid var(--grey-light);
+                            margin-bottom: 5px;
+                            text-align: start;
+                            font-size: 20px;
+                            cursor: pointer;
+                        }
+
+                        button:hover {
+                            background-color: var(--blue);
+                        }
+
                     }
                     .notifications-option-disp {
                         margin: 12px;
@@ -278,7 +290,7 @@ body {
                     height: 50px;
                     border: none;
                     background: transparent;
-                    border-radius: 2%;
+                    border-radius: 10px;
                 }
 
                 .user-changment:hover {
@@ -437,7 +449,7 @@ body {
                 align-items: center;
                 margin-left: 20%;
 
-                .paper-clip {
+                button {
                     height: 40px;
                     width: 40px;
                     background-color: var(--grey-dark);
@@ -470,19 +482,35 @@ body {
                 textarea:focus {
                     border-color: #007bff;
                 }
+            }
+        }
 
-                .send-icon {
-                    height: 40px;
-                    width: 40px;
-                    border-radius: 100%;
-                    background-color: var(--grey-dark);
-                    border: none;
-                    cursor: pointer;
+        .signup_and_signin {
+            width: 10%;
+            display: flex;
+            margin-top: 20px;
+            flex-direction: row;
 
-                    img {
-                        width: 20px;
-                    }
-                }
+            .LogIn {
+                width: 80px;
+                height: 45px;
+                border: none;
+                border-radius: 20px;
+                display: block;
+                font-size: 18px;
+                cursor: pointer;
+                margin-right: 20px;
+            }
+
+            .SignUp {
+                width: 80px;
+                height: 45px;
+                border: none;
+                border-radius: 20px;
+                display: none;
+                font-size: 18px;
+                cursor: pointer;
+                margin-right: 20px;
             }
         }
     }

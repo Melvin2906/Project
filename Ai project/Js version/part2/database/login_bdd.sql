@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS login_info CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE login_info;
+CREATE DATABASE IF NOT EXISTS chatbot CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE chatbot;
 
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -9,3 +9,7 @@ CREATE TABLE users (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     last_login DATETIME
 );
+
+-- CREATE TABLE messages {
+
+-- };
