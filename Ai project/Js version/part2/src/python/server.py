@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, session
 from flask_cors import CORS
 from configparser import ConfigParser
-from chat_bot_using_gemini import ChatBot
+from chatbot_base import ChatBot
 import sqlite3
 
 

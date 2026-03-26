@@ -417,6 +417,4 @@ FodyWeavers.xsd
 *.msm
 *.msp
 
-Ai project/Js version/part2/login_signup/package-lock.json
-Ai project/Js version/part2/login_signup/package.json
-Ai project/Js version/part2/login_signup/node_modules
+Ai project/Js version/part2/node_modules/
