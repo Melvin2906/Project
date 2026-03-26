@@ -1,3 +1,8 @@
+You'll find many project in this repository, a chatbot loading in the terminal,
+a voice assistant, a downloader, a downloader (with many platform access), an AI using
+Google API with a frontend in js/css/html and a backend in python. You'll even see some
+project related with datacamp.
+
 This file will contain all the things that you'll need to upload my project:
    - pip install Customtkinter --> for graphical part
    - pip install pygame --> for graphical part
@@ -9,3 +14,15 @@ This file will contain all the things that you'll need to upload my project:
    - pip install fpdf --> for pdf treatment
    - pip install reportlab --> for pdf treatment
    - pip install panda --> for exel file treatment
+
+
+For the js part
+   - npm install express
+   - npm install bcrypt
+   - npm install mysql2
+   - npm install cors
+
+   use node to lauch the node js who will help you with the login/signup part
+
+Languages presents in this repository
+
