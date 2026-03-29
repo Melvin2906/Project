@@ -105,9 +105,14 @@
             </div>
             <div class="input-area">
                 <audio src=""></audio>
-                <input type="file" id="join" style="display: none;">
-                <button class="paper-clip" id="add-button">
-                    <img src="assets/paper-clip.png" alt="Attach file">
+                <input type="file" id="join-image" accept="image/*" style="display: none;">
+                <input type="file" id="join-doc" accept=".pdf,.doc,.docx,.xlsx,.txt" style="display: none;">
+                
+                <button class="paper-clip" id="btn-image" title="Joindre une image">
+                    <img src="assets/image-icon.png" alt="Image">
+                </button>
+                <button class="paper-clip" id="btn-doc" title="Joindre un document">
+                    <img src="assets/file-icon.png" alt="Document">
                 </button>
                 <button class="mic-button" id="audio-part">
                     <img src="assets/micro.png" alt="Voice input">

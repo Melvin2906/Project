@@ -1,8 +1,9 @@
-from flask import Flask, request, jsonify, session
+from flask import Flask, request, jsonify, session, send_file
 from flask_cors import CORS
 from configparser import ConfigParser
 from chatbot_base import ChatBot
 import sqlite3
+import io
 
 
 # Charger la clé API
@@ -107,9 +108,72 @@ def suggest():
     matches = [row["question"] for row in rows]
     return jsonify(matches)
 
+@app.route("/generate-image", methods=["POST"])
+def create_image():
+    data = request.json
+    prompt = data.get("prompt", "")
+
+    if not prompt:
+        return jsonify({"error": "Prompt manquant"}), 400
+
+    image_bytes = chatbot.generate_image(prompt)
+
+    if image_bytes:
+        # On renvoie directement le fichier binaire au client
+        return send_file(
+            io.BytesIO(image_bytes),
+            mimetype='image/png',
+            as_attachment=False,
+            download_name="generated_image.png"
+        )
+    else:
+        return jsonify({"error": "La génération d'image a échoué"}), 500
+
+@app.route("/generate-doc", methods=["POST"])
+def generate_doc():
+    data = request.json
+    prompt = data.get("prompt", "")
+    file_type = data.get("type", "pdf") # pdf, docx, ou xlsx
+
+    if not prompt:
+        return jsonify({"error": "Prompt vide"}), 400
+
+    try:
+        file_bytes = chatbot.generate_document(prompt, file_type)
+        
+        if file_bytes:
+            mime_types = {
+                "pdf": "application/pdf",
+                "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            }
+            
+            return send_file(
+                io.BytesIO(file_bytes),
+                mimetype=mime_types.get(file_type, "application/octet-stream"),
+                as_attachment=True,
+                download_name=f"generated_file.{file_type}"
+            )
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 @app.route("/", methods=["GET"])
 def root():
     return jsonify({"message": "Serveur Flask actif. Utilise POST /ask pour parler au bot."})
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
+
+@app.route("/ask-document", methods=["POST"])
+def ask_document():
+    prompt = request.form.get("message", "Analyse ce document")
+    file = request.files.get("file")
+    
+    if not file:
+        return jsonify({"error": "Aucun fichier reçu"}), 400
+    
+    file_bytes = file.read()
+    mime_type = file.content_type # Récupère automatiquement le type (application/pdf, etc.)    
+    response = chatbot.read_document(prompt, file_bytes, mime_type)
+    
+    return jsonify({"reply": response})

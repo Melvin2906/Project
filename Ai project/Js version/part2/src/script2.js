@@ -18,52 +18,71 @@ document.getElementById("update-timezone").addEventListener("click", async () =>
     }
 });
 
+// script2.js
 async function sendMessage(userMessage) {
-    const fileInput = document.getElementById("join");
-    const file = fileInput.files[0] || null;
+    const imgInput = document.getElementById("join-image");
+    const docInput = document.getElementById("join-doc");
+    const imgFile = imgInput.files[0];
+    const docFile = docInput.files[0];
 
-    if (!userMessage.trim()) return null; // Return null for empty messages
-    
+    if (!userMessage.trim() && !imgFile && !docFile) return;
+
     try {
-        // Réinitialiser l'input
+        // UI : Setup
         document.getElementById("user-Input").value = "";
-
-        // Ajouter le message de l'utilisateur
-        document.getElementById("main-chat").insertAdjacentHTML("beforeend", `
-            <div class="user">
-                <p>${escapeHtml(userMessage)}</p>
-            </div>
-        `);
-
-        // Ajouter un indicateur de chargement
-        document.getElementById("main-chat").insertAdjacentHTML("beforeend", `
-            <div class="loader"></div>
-        `);
-
-        // Ajouter un conteneur pour la réponse
-        document.getElementById("main-chat").insertAdjacentHTML("beforeend", `
-            <div class="model">
-                <p class="bot-response"></p>
-            </div>
-        `);
-
-        const modelMessage = document.querySelectorAll(".main-IA .chat-container .chat div.model");
-        const lastResponse = modelMessage[modelMessage.length - 1].querySelector(".bot-response");
-
-        let res;
-        let responseData;
+        const chat = document.getElementById("main-chat");
+        chat.insertAdjacentHTML("beforeend", `<div class="user"><p>${userMessage}</p></div><div class="loader"></div>`);
         
-        if (file) {
+        let res;
+        const lowerMsg = userMessage.toLowerCase();
+
+        // Dans le cas où le user veut une image
+        if (lowerMsg.startsWith("/image")) {
+            res = await fetch("http://127.0.0.1:5000/generate-image", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ prompt: userMessage.replace("/image", "").trim() })
+            });
+            if (res.ok) {
+                const blob = await res.blob();
+                renderBotResponse(`<img src="${URL.createObjectURL(blob)}" style="max-width:100%; border-radius:10px;">`);
+                return;
+            }
+        }
+
+        // Dans le cas où le user ceut un document
+        else if (lowerMsg.startsWith("/pdf") || lowerMsg.startsWith("/doc") || lowerMsg.startsWith("/excel")) {
+            let type = lowerMsg.startsWith("/pdf") ? "pdf" : lowerMsg.startsWith("/doc") ? "docx" : "xlsx";
+            res = await fetch("http://127.0.0.1:5000/generate-doc", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ prompt: userMessage, type: type })
+            });
+            if (res.ok) {
+                const blob = await res.blob();
+                renderBotResponse(`<a href="${URL.createObjectURL(blob)}" download="export.${type}">Télécharger le fichier ${type.toUpperCase()}</a>`);
+                return;
+            }
+        }
+
+        // Dans le cas où le user veut analyser un document ou une image
+        else if (imgFile || docFile) {
             const formData = new FormData();
             formData.append("message", userMessage);
-            formData.append("image", file);
+            
+            if (imgFile) {
+                formData.append("image", imgFile);
+                res = await fetch("http://127.0.0.1:5000/ask-image", { method: "POST", body: formData });
+                imgInput.value = "";
+            } else {
+                formData.append("file", docFile);
+                res = await fetch("http://127.0.0.1:5000/ask-document", { method: "POST", body: formData });
+                docInput.value = "";
+            }
+        }
 
-            res = await fetch("http://127.0.0.1:5000/ask-image", {
-                method: "POST",
-                body: formData
-            });
-            fileInput.value = "";
-        } else {
+        // Dans le cas où le cas d'une discussion normale
+        else {
             res = await fetch("http://127.0.0.1:5000/ask", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -71,42 +90,20 @@ async function sendMessage(userMessage) {
             });
         }
 
-        let data = await res.json();
-        let replyText = "";
-        
-        if (data.reply) {
-            replyText = data.reply;
-            if (data.reply.includes("```")) {
-                const pre = document.createElement("pre");
-                const code = document.createElement("code");
-                code.textContent = data.reply;
-                pre.appendChild(code);
-                lastResponse.innerHTML = "";
-                lastResponse.appendChild(pre);
-            } else {
-                lastResponse.innerHTML = marked.parse(data.reply);
-            }
-        } else {
-            replyText = `Error: ${data.error || "No response from server"}`;
-            lastResponse.innerHTML = `<p class="error">${replyText}</p>`;
-        }
-        
-        return replyText; // Return the response for speech
+        const data = await res.json();
+        renderBotResponse(marked.parse(data.reply || data.error));
 
-    } catch (error) {
-        console.error("Error:", error);
-        const errorMsg = "The message could not be sent. Please try again.";
-        document.getElementById("main-chat").insertAdjacentHTML("beforeend", `
-            <div class="error">
-                <p>${errorMsg}</p>
-            </div>
-        `);
-        return errorMsg;
+    } catch (e) {
+        console.error("Erreur:", e);
     } finally {
-        // Retirer l'indicateur de chargement
-        const loader = document.querySelector(".loader");
-        if (loader) loader.remove();
+        document.querySelector(".loader")?.remove();
     }
+}
+
+function renderBotResponse(html) {
+    document.getElementById("main-chat").insertAdjacentHTML("beforeend", `
+        <div class="model"><div class="bot-response">${html}</div></div>
+    `);
 }
 
 // Add this helper function to prevent XSS
@@ -198,8 +195,13 @@ if (copyButt) {
 // Définir le custom element
 customElements.define("textarea-autogrow", Autogrow, { extends: "textarea" });
 
-document.getElementById("add-button").addEventListener("click", () => {
-    document.getElementById("join").click()
+document.getElementById("btn-image").addEventListener("click", () => {
+    document.getElementById("join-image").click()
+})
+
+
+document.getElementById("btn-doc").addEventListener("click", () => {
+    document.getElementById("join-doc").click()
 })
 
 document.getElementById("extend").addEventListener("click", () => {

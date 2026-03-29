@@ -14,6 +14,7 @@ This file will contain all the things that you'll need to upload my project:
    - pip install fpdf --> for pdf treatment
    - pip install reportlab --> for pdf treatment
    - pip install panda --> for exel file treatment
+   - pip install reportlab pandas openpyxl python-docx python-pptx
 
 
 For the js part
