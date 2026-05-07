@@ -1,5 +1,39 @@
 const getUserTimeZone = () => Intl.DateTimeFormat().resolvedOptions().timeZone;
 
+function loadUserInfo() {
+    const token = localStorage.getItem("token")
+    const username = localStorage.getItem("username")
+    const email = localStorage.getItem("email")
+
+    if (!token) {
+        document.getElementById("sign-in").style.display = "block"
+        document.getElementById("sign-up").style.display = "block"
+        document.getElementById("open-u").style.display = "none"
+        document.getElementById("show-option").style.display = "none"
+        return
+    }
+    document.getElementById("sign-in").style.display = "none"
+    document.getElementById("sign-up").style.display = "none"
+    const label = username || email || "User"
+    document.getElementById("open-u").textContent = label
+    document.getElementById("show-option").textContent = label
+    const accountPanel = document.getElementById("display-account")
+    if (accountPanel) {
+        accountPanel.innerHTML = `
+            <h1 class="a-title">Account</h1>
+            <p><strong>Username:</strong> ${username}</p>
+            <p><strong>Email:</strong> ${email}</p>
+        `
+    }
+}
+
+document.getElementById("logout-bttn").addEventListener("click", () => {
+    localStorage.removeItem("token")
+    localStorage.removeItem("username")
+    localStorage.removeItem("email")
+    window.location.href = "login_signup.html"
+})
+
 document.getElementById("update-timezone").addEventListener("click", async () => {
     const timezone = getUserTimeZone();
 
@@ -14,11 +48,10 @@ document.getElementById("update-timezone").addEventListener("click", async () =>
         console.log("Fuseau mis à jour :", data.timezone);
 
     } catch (err) {
-        console.error("Erreur mise ) jour fuseau :", err);
+        console.error("Erreur mise à jour fuseau :", err);
     }
 });
 
-// script2.js
 async function sendMessage(userMessage) {
     const imgInput = document.getElementById("join-image");
     const docInput = document.getElementById("join-doc");
@@ -28,15 +61,12 @@ async function sendMessage(userMessage) {
     if (!userMessage.trim() && !imgFile && !docFile) return;
 
     try {
-        // UI : Setup
         document.getElementById("user-Input").value = "";
         const chat = document.getElementById("main-chat");
         chat.insertAdjacentHTML("beforeend", `<div class="user"><p>${userMessage}</p></div><div class="loader"></div>`);
         
         let res;
         const lowerMsg = userMessage.toLowerCase();
-
-        // Dans le cas où le user veut une image
         if (lowerMsg.startsWith("/image")) {
             res = await fetch("http://127.0.0.1:5000/generate-image", {
                 method: "POST",
@@ -49,8 +79,6 @@ async function sendMessage(userMessage) {
                 return;
             }
         }
-
-        // Dans le cas où le user ceut un document
         else if (lowerMsg.startsWith("/pdf") || lowerMsg.startsWith("/doc") || lowerMsg.startsWith("/excel")) {
             let type = lowerMsg.startsWith("/pdf") ? "pdf" : lowerMsg.startsWith("/doc") ? "docx" : "xlsx";
             res = await fetch("http://127.0.0.1:5000/generate-doc", {
@@ -64,8 +92,6 @@ async function sendMessage(userMessage) {
                 return;
             }
         }
-
-        // Dans le cas où le user veut analyser un document ou une image
         else if (imgFile || docFile) {
             const formData = new FormData();
             formData.append("message", userMessage);
@@ -80,8 +106,6 @@ async function sendMessage(userMessage) {
                 docInput.value = "";
             }
         }
-
-        // Dans le cas où le cas d'une discussion normale
         else {
             res = await fetch("http://127.0.0.1:5000/ask", {
                 method: "POST",
@@ -106,112 +130,98 @@ function renderBotResponse(html) {
     `);
 }
 
-// Add this helper function to prevent XSS
 function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
 }
 
-document.getElementById("join").addEventListener("change", (e) => {
+document.getElementById("join-doc").addEventListener("change", (e) => {
     const file = e.target.files[0];
-    if (file) {
-        console.log("Image sélectionnée :", file.name);
-    }
+    if (file) console.log("Document sélectionnée :", file.name);
+});
+
+document.getElementById("join-image").addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (file) console.log("Image sélectionnée :", file.name);
 });
 
 async function copyElementContentToClipboard(elementClass) {
-    console.log("click")
-  try {
-    const element = document.querySelector(elementClass);
-    if (!element) {
-      console.error(`Element with ID '${elementClass}' not found.`);
-      return;
+    try {
+        const element = document.querySelector(elementClass);
+        if (!element) {
+            console.error(`Element '${elementClass}' not found.`);
+            return;
+        }
+        await navigator.clipboard.writeText(element.textContent);
+        console.log('Content copied to clipboard!');
+    } catch (err) {
+        console.error('Failed to copy content:', err);
     }
-    const textToCopy = element.textContent; // Or element.value for input/textarea
-    await navigator.clipboard.writeText(textToCopy);
-    console.log('Content copied to clipboard!');
-  } catch (err) {
-    console.error('Failed to copy content:', err);
-  }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+    loadUserInfo()
+
     const sendButton = document.getElementById("send-button");
     const userInput = document.getElementById("user-Input");
-    const userFile = document.getElementById("join").files
 
-    // Événement pour le bouton d'envoi
     sendButton.addEventListener("click", () => {
         const message = userInput.value.trim();
-        if (message) {
-            sendMessage(message);
-        }
+        if (message) sendMessage(message);
     });
 
-    // Événement pour la touche Entrée
     userInput.addEventListener("keypress", (e) => {
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
             const message = userInput.value.trim();
-            if (message) {
-                sendMessage(message);
-            }
+            if (message) sendMessage(message);
         }
     });
 });
 
-// Classe pour l'auto-agrandissement du textarea
 class Autogrow extends HTMLTextAreaElement {
     constructor() {
         super();
         this.onInput = this.onInput.bind(this);
     }
-
     connectedCallback() {
         this.addEventListener("input", this.onInput);
-        // Initialiser la hauteur
         setTimeout(() => this.onInput(), 0);
     }
-
     disconnectedCallback() {
         this.removeEventListener("input", this.onInput);
     }
-
     onInput() {
         this.style.height = "auto";
         this.style.height = this.scrollHeight + "px";
     }
 }
+customElements.define("textarea-autogrow", Autogrow, { extends: "textarea" });
 
 const copyButt = document.querySelector("copy")
-
 if (copyButt) {
     copyButt.addEventListener("click", () => {
         copyElementContentToClipboard(".bot-response")
-        console.log("click")
     })
 }
-// Définir le custom element
-customElements.define("textarea-autogrow", Autogrow, { extends: "textarea" });
 
 document.getElementById("btn-image").addEventListener("click", () => {
     document.getElementById("join-image").click()
 })
-
 
 document.getElementById("btn-doc").addEventListener("click", () => {
     document.getElementById("join-doc").click()
 })
 
 document.getElementById("extend").addEventListener("click", () => {
-    document.getElementById("side").style="display: yes;";
-    document.getElementById("reduct").style="display: none;"
+    document.getElementById("side").style = "display: block;";
+    document.getElementById("reduct").style = "display: none;"
 })
 
 document.getElementById("close-side").addEventListener("click", () => {
-    document.getElementById("side").style="display: none;"
-    document.getElementById("reduct").style="display: yes;"
+    document.getElementById("side").style = "display: none;"
+    document.getElementById("reduct").style = "display: block;"
 })
 
 const open_u = document.getElementById("open-u");
@@ -241,26 +251,21 @@ document.getElementById("set-but").addEventListener("click", () => {
 })
 
 const click_to_display = () => {
-    const list = ["general", "notifications","personalization","apps","data-control","security","parental-control","account"];
-
+    const list = ["general", "notifications", "personalization", "apps", "data-control", "security", "parental-control", "account"];
     list.forEach(id => {
         document.getElementById(id).addEventListener("click", () => {
             list.forEach(x => {
-                document.getElementById("display-" + x).style.display =
-                    x === id ? "block" : "none";
+                document.getElementById("display-" + x).style.display = x === id ? "block" : "none";
             });
         });
     });
 }
 
 document.getElementById("close-setting-table").addEventListener("click", () => {
-    let list = ["notifications", "personalization", "apps", "data-control", "security", "parental-control", "account"];
-
-    for (let i = 0; i < list.length; i++) {
-        if (document.getElementById("display-" + list[i]).style.display === "block") {
-            document.getElementById("display-" + list[i]).style.display = "none"
-        }
-    }
+    let list = ["notifications", "personalization", "apps", "data-control", "security", "parental-control", "account", "general"];
+    list.forEach(id => {
+        document.getElementById("display-" + id).style.display = "none"
+    })
     overlay.style.display = "none"
 })
 
@@ -269,21 +274,26 @@ document.getElementById("user-profil").addEventListener("click", () => {
     document.getElementById("display-account").style.display = "block"
     user_o.style.display = "none"
     user_o.className = "user-option-close"
+    const username = localStorage.getItem("username")
+    const email = localStorage.getItem("email")
+    document.getElementById("display-account").innerHTML = `
+        <h1 class="a-title">Account</h1>
+        <p><strong>Username:</strong> ${username || "—"}</p>
+        <p><strong>Email:</strong> ${email || "—"}</p>
+    `
 })
 
+const signInBtn = document.getElementById('sign-in');
+const signUpBtn = document.getElementById('sign-up');
 
-const signIn = document.getElementById('sign-in');
-const signUp = document.getElementById('sign-up');
-
-signIn.addEventListener('click', () => {
+signInBtn.addEventListener('click', () => {
     document.getElementById('login-interface').click();
 })
 
-signUp.addEventListener('click', () => {
+signUpBtn.addEventListener('click', () => {
     document.getElementById('signup-interface').click();
 })
 
-// Pour gérer les bouton du setting pannel
 click_to_display()
 
 export { sendMessage }

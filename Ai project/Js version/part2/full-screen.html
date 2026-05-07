@@ -107,12 +107,17 @@
                 <audio src=""></audio>
                 <input type="file" id="join-image" accept="image/*" style="display: none;">
                 <input type="file" id="join-doc" accept=".pdf,.doc,.docx,.xlsx,.txt" style="display: none;">
-                
-                <button class="paper-clip" id="btn-image" title="Joindre une image">
-                    <img src="assets/image-icon.png" alt="Image">
-                </button>
-                <button class="paper-clip" id="btn-doc" title="Joindre un document">
-                    <img src="assets/file-icon.png" alt="Document">
+
+                <div class="paper-clip-overlay" id="load_files" style="display: none;">
+                    <button class="image-loader" id="btn-image">
+                        <img src="assets/paper-clip.png" alt="Image">
+                    </button>
+                    <button class="doc-loader" id="btn-doc">
+                        <img src="assets/paper-clip.png" alt="Document">
+                    </button>
+                </div>
+                <button class="paper-clip" id="show-load-options">
+                    <img src="assets/paper-clip.png" alt="Join-files">
                 </button>
                 <button class="mic-button" id="audio-part">
                     <img src="assets/micro.png" alt="Voice input">
@@ -125,10 +130,10 @@
         </div>
         <div class="signup_and_signin" id="buttons-up-in">
             <button class="LogIn" id="sign-in" style="display: block;">Log In
-                <a id="login-interface" href="login_signup/login_signup.html" target="_blank" style="display: none;"></a>
+                <a id="login-interface" href="login_signup.html" style="display: none;"></a>
             </button>
             <button class="SignUp" id="sign-up" style="display: block;">Sign up
-                <a id="signup-interface" href="login_signup/login_signup.html" target="_blank" style="display: none;"></a>
+                <a id="signup-interface" href="login_signup.html" style="display: none;"></a>
             </button>
         </div>
     </div>
