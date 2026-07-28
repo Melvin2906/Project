@@ -8,8 +8,6 @@ const genAi = new GoogleGenerativeAI(API_KEY);
 const model = genAi.getGenerativeModel({ 
     model: "gemini-2.5-flash",
     systemInstruction: buildSystemInstruction()
-    // formater les réponse du chatbot avec:
-    //systemInstruction: example
 })
 
 function getUserTimeZone() { 

@@ -1,0 +1,27 @@
+# Commun (chatbot_base.py)
+google-generativeai
+pillow
+reportlab
+python-docx
+pandas
+openpyxl
+
+# Flask (server.py)
+flask
+flask-cors
+flask-limiter
+
+# LLM local (chatbot_base.py - Ollama pour le texte/vision, Stable Diffusion pour les images)
+requests
+pypdf
+diffusers
+torch
+transformers
+accelerate
+
+# FastAPI (main.py)
+fastapi
+uvicorn
+slowapi
+python-multipart
+itsdangerous

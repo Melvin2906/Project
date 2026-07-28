@@ -37,8 +37,6 @@ class ChatBot:
                 generation_config=self._generation_config(temperature),
             )
             responce.resolve()
-
-            # just return the cleaned text
             return responce.text.strip()
         except Exception as e:
             return f"Erreur Gemini: {e}"
@@ -117,13 +115,9 @@ class ChatBot:
         if not prompt:
             raise GenAIExecption("Le prompt ne peut pas être vide")        
         try:
-            # On utilise le modèle Imagen pour la génération
             imagen_model = self.genai.GenerativeModel("imagen-3.0-generate-001")
-            # Génération de l'image
             response = imagen_model.generate_content(prompt)
-            # Récupération de l'objet image (PIL Image)
-            generated_image = response.candidates[0].executable_ad_data.image
-            # On convertit l'image en bytes pour l'envoyer via Flask
+            generated_image = response.candidates[0].content.parts[0].inline_data.data
             img_byte_arr = io.BytesIO()
             generated_image.save(img_byte_arr, format='PNG')
             return img_byte_arr.getvalue()
@@ -133,7 +127,6 @@ class ChatBot:
             return None
     
     def generate_document(self, prompt, file_type):
-        # Demander le contenu à Gemini
         content_prompt = f"Génère le contenu textuel pour un fichier {file_type} basé sur : {prompt}. Sois concis."
         text_content = self.send_prompt(content_prompt)
 
@@ -153,7 +146,6 @@ class ChatBot:
             doc.save(buf)
 
         elif file_type == "xlsx":
-            # On simule un tableau simple
             df = pd.DataFrame({"Contenu": [text_content]})
             with pd.ExcelWriter(buf, engine='openpyxl') as writer:
                 df.to_excel(writer, index=False)
@@ -167,7 +159,6 @@ class ChatBot:
             raise GenAIExecption("Le prompt ne peut pas être vide")
         
         try:
-            # Pour Gemini 1.5/2.0, on peut envoyer les bytes directement avec le mime_type
             document_data = {
                 "mime_type": mime_type,
                 "data": file_bytes
