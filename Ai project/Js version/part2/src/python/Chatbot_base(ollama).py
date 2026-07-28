@@ -65,6 +65,20 @@ class ChatBot:
         except Exception as e:
             return f"Erreur LLM local: {e}"
 
+    def send_prompt_with_history(self, messages, temperature=0.1):
+        """Comme send_prompt, mais sans dépendre de l'état interne partagé
+        (self.conversation). `messages` est la liste complète à envoyer
+        ([{'role':..,'content':..}, ...]) — utile quand l'historique vit en DB
+        par conversation/utilisateur, pour éviter que toutes les conversations
+        de tous les utilisateurs ne se mélangent dans une seule instance globale."""
+        if not messages:
+            raise GenAIExecption('Messages cannot be empty')
+
+        try:
+            return self._ollama_chat(messages, temperature)
+        except Exception as e:
+            return f"Erreur LLM local: {e}"
+
     def send_prompt_with_image(self, prompt, image_bytes, temperature=0.1):
         if not prompt:
             raise GenAIExecption("Prompt cannot be empty")
@@ -203,8 +217,10 @@ class ChatBot:
         except Exception:
             return ""
 
-    def read_document(self, prompt, file_bytes, mime_type, temperature=0.1):
-        """Extrait le texte du document localement, puis l'envoie au LLM local en texte."""
+    def read_document(self, prompt, file_bytes, mime_type, temperature=0.1, history=None):
+        """Extrait le texte du document localement, puis l'envoie au LLM local en texte.
+        `history` (optionnel) : messages précédents de la conversation (depuis la DB),
+        pour ne pas dépendre de l'état interne partagé."""
         if not prompt:
             raise GenAIExecption("Le prompt ne peut pas être vide")
 
@@ -215,7 +231,10 @@ class ChatBot:
                 return "Impossible d'extraire du texte de ce document (format non supporté ou document scanné sans OCR)."
 
             full_prompt = f"{prompt}\n\n--- Contenu du document ---\n{extracted_text}"
-            return self.send_prompt(full_prompt, temperature)
+            messages = list(self._conversation_history) + (history or []) + [
+                {"role": "user", "content": full_prompt}
+            ]
+            return self.send_prompt_with_history(messages, temperature)
 
         except Exception as e:
             return f"Erreur lors de l'analyse du document : {e}"

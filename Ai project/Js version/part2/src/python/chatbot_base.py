@@ -23,14 +23,13 @@ class ChatBot:
 
         self.preload_conversation()
 
-    
     def send_prompt(self, prompt, temperature=0.1):
         if temperature < 0 or temperature > 1:
             raise GenAIExecption('Temperature must be between 0 and 1')
-        
+
         if not prompt:
             raise GenAIExecption('Prompt cannot be empty')
-        
+
         try:
             responce = self.conversation.send_message(
                 content=prompt,
@@ -40,7 +39,37 @@ class ChatBot:
             return responce.text.strip()
         except Exception as e:
             return f"Erreur Gemini: {e}"
-        
+
+    def send_prompt_with_history(self, messages, temperature=0.1):
+        """Comme send_prompt, mais reconstruit une conversation Gemini jetable à
+        partir d'un historique explicite ([{'role':..,'content':..}, ...] issu de
+        la DB), au lieu de dépendre de self.conversation qui est partagé par
+        toutes les requêtes de tous les utilisateurs sur cette instance de
+        ChatBot. Indispensable dès qu'il y a plusieurs comptes/conversations en
+        parallèle, sinon leurs échanges se mélangent."""
+        if not messages:
+            raise GenAIExecption('Messages cannot be empty')
+
+        gemini_history = [
+            {
+                "role": "model" if m["role"] == "assistant" else m["role"],
+                "parts": [m["content"]],
+            }
+            for m in messages[:-1]
+        ]
+        last_message = messages[-1]["content"]
+
+        try:
+            temp_conversation = self.model.start_chat(history=gemini_history)
+            response = temp_conversation.send_message(
+                content=last_message,
+                generation_config=self._generation_config(temperature),
+            )
+            response.resolve()
+            return response.text.strip()
+        except Exception as e:
+            return f"Erreur Gemini: {e}"
+
     def send_prompt_with_image(self, prompt, image_bytes, temperature=0.1):
         if not prompt:
             raise GenAIExecption("Prompt cannot be empty")
@@ -61,7 +90,7 @@ class ChatBot:
 
         except Exception as e:
             return f"Erreur Gemini (image): {e}"
-        
+
     def update_datetime(self, timezone):
         try:
             now = datetime.now(tz=ZoneInfo(timezone))
@@ -70,7 +99,7 @@ class ChatBot:
             timezone = "UTC"
 
         formatted = now.strftime("%Y-%m-%d %H:%M:%S")
-        
+
         return (
             f"System information:\n"
             f"- Current date and time: {formatted}\n"
@@ -87,10 +116,9 @@ class ChatBot:
 
     def clear_conversation(self):
         self.conversation = self.model.start_chat(history=[])
-    
+
     def start_convertion(self):
         self.conversation = self.model.start_chat(history=self._conversation_history)
-
 
     def _generation_config(self, temperature):
         return genai.types.GenerationConfig(
@@ -113,7 +141,7 @@ class ChatBot:
 
     def generate_image(self, prompt):
         if not prompt:
-            raise GenAIExecption("Le prompt ne peut pas être vide")        
+            raise GenAIExecption("Le prompt ne peut pas être vide")
         try:
             imagen_model = self.genai.GenerativeModel("imagen-3.0-generate-001")
             response = imagen_model.generate_content(prompt)
@@ -125,7 +153,7 @@ class ChatBot:
         except Exception as e:
             print(f"Erreur de génération d'image: {e}")
             return None
-    
+
     def generate_document(self, prompt, file_type):
         content_prompt = f"Génère le contenu textuel pour un fichier {file_type} basé sur : {prompt}. Sois concis."
         text_content = self.send_prompt(content_prompt)
@@ -138,7 +166,7 @@ class ChatBot:
             p.drawString(100, 730, text_content)
             p.showPage()
             p.save()
-        
+
         elif file_type == "docx":
             doc = Document()
             doc.add_heading('Document IA', 0)
@@ -153,21 +181,38 @@ class ChatBot:
         buf.seek(0)
         return buf.getvalue()
 
-    def read_document(self, prompt, file_bytes, mime_type, temperature=0.1):
-        """Permet à Gemini d'analyser un document (PDF, Text, etc.)"""
+    def read_document(self, prompt, file_bytes, mime_type, temperature=0.1, history=None):
+        """Permet à Gemini d'analyser un document (PDF, Text, etc.).
+        `history` (optionnel) : messages précédents de la conversation (depuis
+        la DB), pour ne pas dépendre de l'état interne partagé self.conversation."""
         if not prompt:
             raise GenAIExecption("Le prompt ne peut pas être vide")
-        
+
         try:
             document_data = {
                 "mime_type": mime_type,
                 "data": file_bytes
             }
-            
-            response = self.model.generate_content(
-                [prompt, document_data],
-                generation_config=self._generation_config(temperature)
-            )
+
+            if history:
+                gemini_history = [
+                    {
+                        "role": "model" if m["role"] == "assistant" else m["role"],
+                        "parts": [m["content"]],
+                    }
+                    for m in history
+                ]
+                temp_conversation = self.model.start_chat(history=gemini_history)
+                response = temp_conversation.send_message(
+                    content=[prompt, document_data],
+                    generation_config=self._generation_config(temperature),
+                )
+            else:
+                response = self.model.generate_content(
+                    [prompt, document_data],
+                    generation_config=self._generation_config(temperature)
+                )
+
             response.resolve()
             return response.text.strip()
         except Exception as e:

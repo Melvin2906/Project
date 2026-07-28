@@ -7,6 +7,7 @@ DB_NAME = "history.db"
 def get_db_connection():
     conn = sqlite3.connect(DB_NAME)
     conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA foreign_keys = ON")
     return conn
 
 
@@ -15,6 +16,7 @@ def init_db():
     conn = get_db_connection()
     conn.executescript(
         """
+        -- Recherche de questions fréquentes (suggestions) --
         CREATE TABLE IF NOT EXISTS questions (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             question TEXT NOT NULL,
@@ -41,6 +43,25 @@ def init_db():
             INSERT INTO questions_fts(questions_fts, rowid, question) VALUES ('delete', old.id, old.question);
             INSERT INTO questions_fts(rowid, question) VALUES (new.id, new.question);
         END;
+
+        -- Historique des conversations --
+        -- user_id référence l'id utilisateur du serveur Node/MySQL (dans le
+        -- token JWT), pas une table locale : les comptes vivent uniquement
+        -- côté Node, cette DB ne fait que stocker les conversations.
+        CREATE TABLE IF NOT EXISTS conversations (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            title TEXT NOT NULL DEFAULT 'Nouvelle conversation',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+
+        CREATE TABLE IF NOT EXISTS messages (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            conversation_id INTEGER NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
+            role TEXT NOT NULL,
+            content TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
         """
     )
     conn.commit()
@@ -52,9 +73,6 @@ def _normalize(question):
 
 
 def record_question(question):
-    """Enregistre une question posée par un utilisateur, ou incrémente son
-    compteur de popularité si une question équivalente existe déjà (comparaison
-    insensible à la casse / espaces)."""
     original = question.strip()
     normalized = _normalize(original)
     if not normalized:
@@ -80,9 +98,6 @@ def record_question(question):
 
 
 def suggest(query, limit=5):
-    """Retourne les questions les plus 'pertinentes' pour une saisie donnée :
-    d'abord par qualité du match texte (bm25, plus bas = meilleur), puis par
-    popularité (nombre de fois posée) en cas d'égalité."""
     query = query.strip()
     if not query:
         return []
@@ -102,3 +117,59 @@ def suggest(query, limit=5):
     conn.close()
 
     return [row["question"] for row in rows]
+
+
+def create_conversation(user_id, title="Nouvelle conversation"):
+    conn = get_db_connection()
+    cur = conn.execute(
+        "INSERT INTO conversations (user_id, title) VALUES (?, ?)", (user_id, title)
+    )
+    conn.commit()
+    conv_id = cur.lastrowid
+    conn.close()
+    return conv_id
+
+
+def list_conversations(user_id):
+    conn = get_db_connection()
+    rows = conn.execute(
+        "SELECT id, title, created_at FROM conversations WHERE user_id = ? ORDER BY created_at DESC",
+        (user_id,),
+    ).fetchall()
+    conn.close()
+    return [dict(row) for row in rows]
+
+
+def get_conversation(conversation_id):
+    conn = get_db_connection()
+    row = conn.execute(
+        "SELECT * FROM conversations WHERE id = ?", (conversation_id,)
+    ).fetchone()
+    conn.close()
+    return row
+
+
+def delete_conversation(conversation_id):
+    conn = get_db_connection()
+    conn.execute("DELETE FROM conversations WHERE id = ?", (conversation_id,))
+    conn.commit()
+    conn.close()
+
+def add_message(conversation_id, role, content):
+    conn = get_db_connection()
+    conn.execute(
+        "INSERT INTO messages (conversation_id, role, content) VALUES (?, ?, ?)",
+        (conversation_id, role, content),
+    )
+    conn.commit()
+    conn.close()
+
+
+def get_messages(conversation_id):
+    conn = get_db_connection()
+    rows = conn.execute(
+        "SELECT role, content, created_at FROM messages WHERE conversation_id = ? ORDER BY id ASC",
+        (conversation_id,),
+    ).fetchall()
+    conn.close()
+    return [{"role": row["role"], "content": row["content"]} for row in rows]
