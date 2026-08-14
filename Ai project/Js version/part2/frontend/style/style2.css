@@ -310,8 +310,12 @@ body {
                     width: 90%;
                     height: 50px;
                     border: none;
-                    background: transparent;
+                    color: white;
+                    font-size: larger;
+                    font-family: 'Times New Roman', Times, serif;
+                    background-color: var(--black);
                     border-radius: 10px;
+                    cursor: pointer;
                 }
 
                 .user-changment:hover {
@@ -517,6 +521,7 @@ body {
                     padding-top: 1rem;
                     background: var(--grey-dark);
                     border: none;
+                    color: white ;
                     border-radius: 30px;
                     font-size: 20px;
                     font-family: Arial, sans-serif;
