@@ -1,3 +1,5 @@
+require("dotenv").config()
+
 const express = require("express")
 const mysql = require("mysql2")
 const bcrypt = require("bcrypt")
@@ -30,7 +32,7 @@ const authLimiter = rateLimit({
 const db = mysql.createConnection({
     host: process.env.DB_HOST || "localhost",
     user: process.env.DB_USER || "root",
-    password: process.env.DB_PASSWORD || "",
+    password: process.env.DB_PASSWORD || "root",
     database: process.env.DB_NAME || "chatbot"
 })
 
@@ -90,6 +92,7 @@ app.post("/login", authLimiter, (req, res) => {
         if (!match) {
             return res.status(401).json({ error: "Email ou mot de passe incorrect" })
         }
+
         const token = jwt.sign(
             { id: user.id, username: user.username, email: user.email },
             JWT_SECRET,

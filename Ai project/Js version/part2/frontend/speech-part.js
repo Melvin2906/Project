@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function initSpeech() {
-    // Check if we're on localhost or HTTPS
     const isSecure = window.location.protocol === 'https:' || 
                      window.location.hostname === 'localhost' || 
                      window.location.hostname === '127.0.0.1';
@@ -14,7 +13,6 @@ function initSpeech() {
         console.warn("Speech recognition may not work on non-HTTPS connections");
     }
     
-    // Check for browser support
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
         console.error("SpeechRecognition not supported");
         const micButton = document.getElementById("audio-part");
@@ -32,7 +30,6 @@ function initSpeech() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     let recognition = null;
     
-    // Function to create a new recognition instance
     function createRecognition() {
         const newRecognition = new SpeechRecognition();
         newRecognition.continuous = false;
@@ -52,7 +49,6 @@ function initSpeech() {
     let retryCount = 0;
     const MAX_RETRIES = 3;
     
-    // Function to restart recognition after error
     function restartRecognition() {
         if (retryCount < MAX_RETRIES && isListening) {
             retryCount++;
@@ -110,11 +106,9 @@ function initSpeech() {
                 userInput.value = transcript;
             }
             
-            // Auto-send if confidence is high enough
             if (confidence > 0.5 && transcript.trim()) {
                 await processCommand(transcript);
             } else if (transcript.trim()) {
-                // Just fill the input field for user to review
                 console.log("Low confidence, waiting for user to send manually");
             }
         };
@@ -122,11 +116,9 @@ function initSpeech() {
         recognition.onerror = (event) => {
             console.error("Speech recognition error:", event.error, event.message);
             
-            // Handle specific errors
             switch(event.error) {
                 case 'no-speech':
                     console.log("No speech detected. Please try again.");
-                    // Don't retry for no-speech, just reset
                     isListening = false;
                     recordButton.style.opacity = "1";
                     recordButton.style.backgroundColor = "";
@@ -150,7 +142,6 @@ function initSpeech() {
                     
                 case 'network':
                     console.error("Network error occurred. This might be due to missing API credentials or network issues.");
-                    // Try to restart for network errors
                     if (retryCount < MAX_RETRIES) {
                         restartRecognition();
                     } else {
@@ -172,7 +163,6 @@ function initSpeech() {
     
     recordButton.addEventListener("click", () => {
         if (isListening) {
-            // Stop listening
             if (recognition) {
                 try {
                     recognition.stop();
@@ -184,9 +174,7 @@ function initSpeech() {
             recordButton.style.opacity = "1";
             recordButton.style.backgroundColor = "";
         } else {
-            // Start listening
             try {
-                // Create fresh recognition instance
                 recognition = createRecognition();
                 setupRecognitionHandlers();
                 recognition.start();
@@ -196,7 +184,6 @@ function initSpeech() {
                 console.error("Error starting recognition:", error);
                 isListening = false;
                 
-                // Check if it's a permission issue
                 if (error.name === 'NotAllowedError') {
                     alert("Please allow microphone access to use voice input.");
                 } else if (error.name === 'NotSupportedError') {
@@ -210,7 +197,6 @@ function initSpeech() {
     
     async function processCommand(transcript) {
         try {
-            // Show loading state
             recordButton.style.opacity = "0.5";
             
             const response = await sendMessage(transcript);
@@ -235,15 +221,13 @@ function initSpeech() {
                 return;
             }
             
-            // Clean the text for speech
             const cleanText = text.replace(/[#*`]/g, '')
                                  .replace(/```[\s\S]*?```/g, '')
                                  .replace(/\[.*?\]\(.*?\)/g, '')
-                                 .substring(0, 500); // Limit length
+                                 .substring(0, 500);
             
             const utterance = new SpeechSynthesisUtterance(cleanText);
             
-            // Language detection
             if (/[\u0400-\u04FF]/.test(cleanText)) {
                 utterance.lang = 'ru-RU';
             } else if (/[\u0600-\u06FF]/.test(cleanText)) {
@@ -257,8 +241,6 @@ function initSpeech() {
             } else {
                 utterance.lang = 'en-US';
             }
-            
-            // Try to find a good voice
             const voices = window.speechSynthesis.getVoices();
             const preferredVoice = voices.find(voice => 
                 voice.lang.startsWith(utterance.lang.split('-')[0]) && 
@@ -269,7 +251,7 @@ function initSpeech() {
                 utterance.voice = preferredVoice;
             }
             
-            utterance.rate = 0.9; // Slightly slower for better clarity
+            utterance.rate = 0.9;
             utterance.pitch = 1.0;
             utterance.volume = 1.0;
             
@@ -283,20 +265,16 @@ function initSpeech() {
                 reject(event);
             };
             
-            // Cancel any ongoing speech
             window.speechSynthesis.cancel();
             
-            // Small delay to ensure cancellation is processed
             setTimeout(() => {
                 window.speechSynthesis.speak(utterance);
             }, 100);
         });
     }
     
-    // Test if speech recognition is properly configured
     console.log("Speech recognition initialized. Click the microphone button to start.");
     
-    // Add a visual indicator that voice is supported
     if (recordButton) {
         recordButton.title = "Click to speak (requires microphone access)";
     }

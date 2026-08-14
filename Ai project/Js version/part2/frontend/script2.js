@@ -1,4 +1,27 @@
+const API_BASE = "http://127.0.0.1:5000";
+
 const getUserTimeZone = () => Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+let currentConversationId = null;
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text ?? "";
+    return div.innerHTML;
+}
+
+function sanitizeHtml(html) {
+    if (typeof DOMPurify !== "undefined") {
+        return DOMPurify.sanitize(html);
+    }
+    console.warn("DOMPurify n'est pas chargé : le HTML du bot n'est pas sanitizé. Ajoute-le dans ta page.");
+    return html;
+}
+
+function authHeaders(extra = {}) {
+    const token = localStorage.getItem("token");
+    return token ? { ...extra, "Authorization": `Bearer ${token}` } : extra;
+}
 
 function loadUserInfo() {
     const token = localStorage.getItem("token")
@@ -9,36 +32,117 @@ function loadUserInfo() {
         document.getElementById("sign-in").style.display = "block"
         document.getElementById("sign-up").style.display = "block"
         document.getElementById("open-u").style.display = "none"
-        document.getElementById("show-option").style.display = "none"
         return
     }
     document.getElementById("sign-in").style.display = "none"
     document.getElementById("sign-up").style.display = "none"
     const label = username || email || "User"
     document.getElementById("open-u").textContent = label
-    document.getElementById("show-option").textContent = label
     const accountPanel = document.getElementById("display-account")
     if (accountPanel) {
         accountPanel.innerHTML = `
             <h1 class="a-title">Account</h1>
-            <p><strong>Username:</strong> ${username}</p>
-            <p><strong>Email:</strong> ${email}</p>
+            <p><strong>Username:</strong> ${escapeHtml(username)}</p>
+            <p><strong>Email:</strong> ${escapeHtml(email)}</p>
         `
     }
+}
+
+// --- Authentification ---
+
+async function register(username, email, password) {
+    const res = await fetch(`${API_BASE}/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, email, password })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Erreur d'inscription");
+
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("username", data.username);
+    localStorage.setItem("email", data.email);
+    loadUserInfo();
+    return data;
+}
+
+async function login(email, password) {
+    const res = await fetch(`${API_BASE}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Erreur de connexion");
+
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("username", data.username);
+    localStorage.setItem("email", data.email);
+    loadUserInfo();
+    return data;
 }
 
 document.getElementById("logout-bttn").addEventListener("click", () => {
     localStorage.removeItem("token")
     localStorage.removeItem("username")
     localStorage.removeItem("email")
+    currentConversationId = null
     window.location.href = "login_signup.html"
 })
+
+// --- Historique des conversations ---
+
+async function loadConversations() {
+    const res = await fetch(`${API_BASE}/conversations`, {
+        headers: authHeaders()
+    });
+    if (!res.ok) return [];
+    return res.json();
+}
+
+async function ensureConversation() {
+    if (currentConversationId) return currentConversationId;
+
+    const res = await fetch(`${API_BASE}/conversations`, {
+        method: "POST",
+        headers: authHeaders({ "Content-Type": "application/json" }),
+        body: JSON.stringify({ title: "Nouvelle conversation" })
+    });
+    const data = await res.json();
+    currentConversationId = data.id;
+    return currentConversationId;
+}
+
+async function openConversation(conversationId) {
+    const res = await fetch(`${API_BASE}/conversations/${conversationId}/messages`, {
+        headers: authHeaders()
+    });
+    if (!res.ok) return;
+
+    const messages = await res.json();
+    currentConversationId = conversationId;
+
+    const chat = document.getElementById("main-chat");
+    chat.innerHTML = "";
+    messages.forEach(msg => {
+        if (msg.role === "user") {
+            chat.insertAdjacentHTML("beforeend", `<div class="user"><p>${escapeHtml(msg.content)}</p></div>`);
+        } else {
+            renderBotResponse(sanitizeHtml(marked.parse(msg.content)));
+        }
+    });
+}
+
+function startNewConversation() {
+    currentConversationId = null;
+    document.getElementById("main-chat").innerHTML = "";
+}
 
 document.getElementById("update-timezone").addEventListener("click", async () => {
     const timezone = getUserTimeZone();
 
     try {
-        const res = await fetch("http://127.0.0.1:5000/update-timezone", {         
+        const res = await fetch(`${API_BASE}/update-timezone`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ timezone })
@@ -61,16 +165,18 @@ async function sendMessage(userMessage) {
     if (!userMessage.trim() && !imgFile && !docFile) return;
 
     try {
+        const conversationId = await ensureConversation();
+
         document.getElementById("user-Input").value = "";
         const chat = document.getElementById("main-chat");
-        chat.insertAdjacentHTML("beforeend", `<div class="user"><p>${userMessage}</p></div><div class="loader"></div>`);
-        
+        chat.insertAdjacentHTML("beforeend", `<div class="user"><p>${escapeHtml(userMessage)}</p></div><div class="loader"></div>`);
+
         let res;
         const lowerMsg = userMessage.toLowerCase();
         if (lowerMsg.startsWith("/image")) {
-            res = await fetch("http://127.0.0.1:5000/generate-image", {
+            res = await fetch(`${API_BASE}/generate-image`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: authHeaders({ "Content-Type": "application/json" }),
                 body: JSON.stringify({ prompt: userMessage.replace("/image", "").trim() })
             });
             if (res.ok) {
@@ -81,9 +187,9 @@ async function sendMessage(userMessage) {
         }
         else if (lowerMsg.startsWith("/pdf") || lowerMsg.startsWith("/doc") || lowerMsg.startsWith("/excel")) {
             let type = lowerMsg.startsWith("/pdf") ? "pdf" : lowerMsg.startsWith("/doc") ? "docx" : "xlsx";
-            res = await fetch("http://127.0.0.1:5000/generate-doc", {
+            res = await fetch(`${API_BASE}/generate-doc`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: authHeaders({ "Content-Type": "application/json" }),
                 body: JSON.stringify({ prompt: userMessage, type: type })
             });
             if (res.ok) {
@@ -95,27 +201,37 @@ async function sendMessage(userMessage) {
         else if (imgFile || docFile) {
             const formData = new FormData();
             formData.append("message", userMessage);
-            
+            formData.append("conversation_id", conversationId);
+
             if (imgFile) {
                 formData.append("image", imgFile);
-                res = await fetch("http://127.0.0.1:5000/ask-image", { method: "POST", body: formData });
+                res = await fetch(`${API_BASE}/ask-image`, { method: "POST", headers: authHeaders(), body: formData });
                 imgInput.value = "";
             } else {
                 formData.append("file", docFile);
-                res = await fetch("http://127.0.0.1:5000/ask-document", { method: "POST", body: formData });
+                res = await fetch(`${API_BASE}/ask-document`, { method: "POST", headers: authHeaders(), body: formData });
                 docInput.value = "";
             }
         }
         else {
-            res = await fetch("http://127.0.0.1:5000/ask", {
+            res = await fetch(`${API_BASE}/ask`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ message: userMessage })
+                headers: authHeaders({ "Content-Type": "application/json" }),
+                body: JSON.stringify({ message: userMessage, conversation_id: conversationId })
             });
         }
 
+        if (res.status === 401) {
+            renderBotResponse(sanitizeHtml("<p>Session expirée, reconnecte-toi.</p>"));
+            return;
+        }
+        if (res.status === 429) {
+            renderBotResponse(sanitizeHtml("<p>Trop de requêtes, réessaie dans un instant.</p>"));
+            return;
+        }
+
         const data = await res.json();
-        renderBotResponse(marked.parse(data.reply || data.error));
+        renderBotResponse(sanitizeHtml(marked.parse(data.reply || data.error || "Erreur inconnue")));
 
     } catch (e) {
         console.error("Erreur:", e);
@@ -128,12 +244,6 @@ function renderBotResponse(html) {
     document.getElementById("main-chat").insertAdjacentHTML("beforeend", `
         <div class="model"><div class="bot-response">${html}</div></div>
     `);
-}
-
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
 }
 
 document.getElementById("join-doc").addEventListener("change", (e) => {
@@ -278,8 +388,8 @@ document.getElementById("user-profil").addEventListener("click", () => {
     const email = localStorage.getItem("email")
     document.getElementById("display-account").innerHTML = `
         <h1 class="a-title">Account</h1>
-        <p><strong>Username:</strong> ${username || "—"}</p>
-        <p><strong>Email:</strong> ${email || "—"}</p>
+        <p><strong>Username:</strong> ${escapeHtml(username) || "—"}</p>
+        <p><strong>Email:</strong> ${escapeHtml(email) || "—"}</p>
     `
 })
 
@@ -296,4 +406,4 @@ signUpBtn.addEventListener('click', () => {
 
 click_to_display()
 
-export { sendMessage }
+export { sendMessage, login, register, loadConversations, openConversation, startNewConversation }

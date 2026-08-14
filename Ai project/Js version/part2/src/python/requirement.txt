@@ -1,15 +1,9 @@
 # Commun (chatbot_base.py)
-google-generativeai
 pillow
 reportlab
 python-docx
 pandas
 openpyxl
-
-# Flask (server.py)
-flask
-flask-cors
-flask-limiter
 
 # LLM local (chatbot_base.py - Ollama pour le texte/vision, Stable Diffusion pour les images)
 requests
@@ -18,6 +12,18 @@ diffusers
 torch
 transformers
 accelerate
+
+# Auth + historique (auth.py, db.py)
+bcrypt
+PyJWT
+python-dotenv
+
+google-generativeai
+
+# Flask (server.py)
+flask
+flask-cors
+flask-limiter
 
 # FastAPI (main.py)
 fastapi

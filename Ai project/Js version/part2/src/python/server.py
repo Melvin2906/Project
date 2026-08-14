@@ -1,3 +1,6 @@
+from dotenv import load_dotenv
+load_dotenv()
+
 from flask import Flask, request, jsonify, session, send_file, g
 from flask_cors import CORS
 from flask_limiter import Limiter
@@ -67,7 +70,6 @@ def _owned_conversation_or_404(conversation_id):
     if not conversation or conversation["user_id"] != g.user_id:
         return None
     return conversation
-
 
 @app.route("/conversations", methods=["GET"])
 @require_auth

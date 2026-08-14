@@ -228,12 +228,14 @@ body {
                 button {
                     display: flex;
                     border: none;
+                    justify-content: center;
+                    align-items: center;
                     border-radius: 10px;
                     background-color: var(--grey-light);
                     margin-bottom: 10px;
                     width: 100%;
                     height: 50px;
-                    font-size: 14px;
+                    font-size: 16px;
                     cursor: pointer;
                 }
             }
@@ -243,24 +245,38 @@ body {
             box-shadow: var(--shadow);
             width: 25%;
             background-color: var(--grey-dark);
-            overflow-y: auto;
+            overflow-y: hidden;
             height: 100vh;
             display: flex;
             flex-direction: column;
 
-            .close-slidebar {
-                height: 36px;
-                width: 36px;
-                align-self: flex-end;
-                margin: 15px;
-                border: none;
-                border-radius: 50%;
-                cursor: pointer;
-                background: var(--grey-light);
+            .head_ {
+                display: flex;
+                height: 7%;
+                align-items: center;
+                flex-direction: row;
+                background-color: white;
 
-                img {
-                    width: 16px;
-                    height: 16px;
+                .program-name {
+                    margin-left: 5%;
+                    margin-right: 40%;
+                }
+
+                .close-slidebar {
+                    height: 30px;
+                    width: 30px;
+                    margin-bottom: 6%;
+                    margin-left: 15%;
+                    align-self: flex-end;
+                    border: none;
+                    border-radius: 10px;
+                    cursor: pointer;
+                    background: var(--grey-light);
+
+                    img {
+                        width: 16px;
+                        height: 16px;
+                    }
                 }
             }
 
@@ -268,6 +284,7 @@ body {
                 flex: 1;
                 padding: 10px;
                 overflow-y: auto;
+                height: 80%;
             }
 
             .history-item {
@@ -287,6 +304,7 @@ body {
             .setting {
                 padding: 15px;
                 border-top: 1px solid var(--grey-light);
+                height: 6%;
 
                 .user-changment {
                     width: 90%;
@@ -341,10 +359,30 @@ body {
                 }
             }
 
+            .chat-History {
+                flex: 1;
+                padding: 10px;
+                overflow-y: auto;
+                height: 80%;
+            }
+
             .user_reduct {
-                top: 1000px;
-                padding: 15px;
                 border-top: 1px solid var(--grey-light);
+
+                button {
+                    background-color: transparent;
+                    border: none;
+                    border-radius: 10px;
+                    
+                    img {
+                        height: 20px;
+                        width: 20px;
+                    }
+                }
+
+                button:hover {
+                    background-color: var(--blue);
+                }
             }
 
             .extend-slidebar:hover {
@@ -364,6 +402,7 @@ body {
                 flex-direction: column;
                 height: 90vh;
                 overflow-y: auto;
+                scrollbar-track-color: transparent;
 
                 .chat {
                     flex: 1;
@@ -383,6 +422,8 @@ body {
                     div.model {
                         align-self: flex-start;
                         overflow-x: auto;
+                        color: white;
+                        font-size: larger;
                         p {
                             background-color: transparent;
                         }

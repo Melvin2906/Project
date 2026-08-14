@@ -42,22 +42,29 @@ class ChatBot:
 
     def send_prompt_with_history(self, messages, temperature=0.1):
         """Comme send_prompt, mais reconstruit une conversation Gemini jetable à
-        partir d'un historique explicite ([{'role':..,'content':..}, ...] issu de
-        la DB), au lieu de dépendre de self.conversation qui est partagé par
-        toutes les requêtes de tous les utilisateurs sur cette instance de
-        ChatBot. Indispensable dès qu'il y a plusieurs comptes/conversations en
-        parallèle, sinon leurs échanges se mélangent."""
+        partir d'un historique explicite (mélange possible de deux formats :
+        {'role':..,'content':..} venant de la DB, ou {'role':..,'parts':[..]}
+        natif Gemini venant de self._conversation_history), au lieu de dépendre
+        de self.conversation qui est partagé par toutes les requêtes de tous les
+        utilisateurs sur cette instance de ChatBot. Indispensable dès qu'il y a
+        plusieurs comptes/conversations en parallèle, sinon leurs échanges se
+        mélangent."""
         if not messages:
             raise GenAIExecption('Messages cannot be empty')
+
+        def _text_of(message):
+            if "content" in message:
+                return message["content"]
+            return message["parts"][0]
 
         gemini_history = [
             {
                 "role": "model" if m["role"] == "assistant" else m["role"],
-                "parts": [m["content"]],
+                "parts": [_text_of(m)],
             }
             for m in messages[:-1]
         ]
-        last_message = messages[-1]["content"]
+        last_message = _text_of(messages[-1])
 
         try:
             temp_conversation = self.model.start_chat(history=gemini_history)
@@ -143,7 +150,7 @@ class ChatBot:
         if not prompt:
             raise GenAIExecption("Le prompt ne peut pas être vide")
         try:
-            imagen_model = self.genai.GenerativeModel("imagen-3.0-generate-001")
+            imagen_model = self.genai.GenerativeModel("gemini-2.5-flash-image-preview")
             response = imagen_model.generate_content(prompt)
             generated_image = response.candidates[0].content.parts[0].inline_data.data
             img_byte_arr = io.BytesIO()

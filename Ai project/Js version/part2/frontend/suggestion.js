@@ -12,7 +12,6 @@ input.addEventListener("input", async () => {
         const res = await fetch(`/suggest?q=${encodeURIComponent(query)}`);
         const data = await res.json();
 
-        // Nettoyer l'affichage
         suggestionsBox.innerHTML = "";
 
         data.forEach(s => {
@@ -20,7 +19,7 @@ input.addEventListener("input", async () => {
             li.textContent = s;
 
             li.onclick = () => {
-                input.value = s; // Complète l'input
+                input.value = s;
                 suggestionsBox.innerHTML = "";
             };
 

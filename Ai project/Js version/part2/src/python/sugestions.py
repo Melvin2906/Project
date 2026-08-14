@@ -1,7 +1,7 @@
 import sqlite3
 import re
 
-DB_NAME = "history.db"
+DB_NAME = "src/python/temp/history.db"
 
 
 def get_db_connection():

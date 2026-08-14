@@ -1,3 +1,6 @@
+from dotenv import load_dotenv
+load_dotenv()  # doit être fait AVANT d'importer auth/chatbot_base, qui lisent os.environ à l'import
+
 from fastapi import FastAPI, Request, UploadFile, File, Form, Header, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
@@ -65,12 +68,12 @@ def get_current_user(authorization: str = Header(None)):
 
     return payload
 
-
 def _owned_conversation_or_404(conversation_id, user_id):
     conversation = db.get_conversation(conversation_id)
     if not conversation or conversation["user_id"] != user_id:
         raise HTTPException(status_code=404, detail="Conversation introuvable")
     return conversation
+
 
 class TimezoneBody(BaseModel):
     timezone: str | None = None
@@ -92,7 +95,6 @@ class GenerateDocBody(BaseModel):
 
 class ConversationBody(BaseModel):
     title: str = "Nouvelle conversation"
-
 
 @app.get("/conversations")
 async def get_conversations(user=Depends(get_current_user)):
@@ -117,7 +119,6 @@ async def delete_conversation(conv_id: int, user=Depends(get_current_user)):
     db.delete_conversation(conv_id)
     return {"status": "ok"}
 
-
 @app.post("/update-timezone")
 async def update_timezone(body: TimezoneBody, request: Request):
     timezone = body.timezone
@@ -127,7 +128,6 @@ async def update_timezone(body: TimezoneBody, request: Request):
     request.session["timezone"] = timezone
     chatbot.update_datetime(timezone=timezone)
     return {"status": "ok", "timezone": timezone}
-
 
 @app.post("/ask")
 @limiter.limit("20/minute")
