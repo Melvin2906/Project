@@ -1,5 +1,5 @@
-import google.generativeai as genai
-from PIL import Image
+from google import genai
+from google.genai import types
 import io
 from datetime import datetime
 from zoneinfo import ZoneInfo
@@ -10,91 +10,103 @@ import pandas as pd
 class GenAIExecption(Exception):
     """GenAI Exception base class"""
 
+
 class ChatBot:
-    """Chat can only have one candidate count"""
     CHATBOT_NAME = "My Gemini AI"
+    MODEL_NAME = "gemini-2.5-flash"
+    IMAGE_MODEL_NAME = "gemini-2.5-flash-image"
+
+    BASE_INSTRUCTION = (
+        "Please format your responses in clear Markdown with headings, lists, "
+        "and emphasis when useful."
+    )
 
     def __init__(self, api_key):
-        self.genai = genai
-        self.genai.configure(api_key=api_key)
-        self.model = self.genai.GenerativeModel("gemini-2.5-flash")
+        self.client = genai.Client(api_key=api_key)
         self.conversation = None
         self._conversation_history = []
-
         self.preload_conversation()
 
-    def send_prompt(self, prompt, temperature=0.1):
+    def _system_instruction(self, context=None):
+        """`context` (ex: date/heure courante) part en system_instruction —
+        jamais mélangé au message utilisateur. Avant, on le collait devant le
+        prompt et le modèle le traitait comme un message à "accuser réception",
+        d'où les réponses parasites ("Thank you for providing the system
+        information...")."""
+        if context:
+            return f"{self.BASE_INSTRUCTION}\n\n{context}"
+        return self.BASE_INSTRUCTION
+
+    def _grounded_config(self, temperature, context=None):
+        """google_search active le grounding : le modèle peut chercher sur le
+        web avant de répondre, pour des infos à jour plutôt que sa seule
+        mémoire d'entraînement."""
+        return types.GenerateContentConfig(
+            temperature=temperature,
+            system_instruction=self._system_instruction(context),
+            tools=[types.Tool(google_search=types.GoogleSearch())],
+        )
+
+    def _to_gemini_contents(self, messages):
+        contents = []
+        for m in messages:
+            text = m.get("content")
+            if text is None:
+                text = m.get("parts", [""])[0]
+            role = "model" if m["role"] == "assistant" else "user"
+            contents.append(types.Content(role=role, parts=[types.Part(text=text)]))
+        return contents
+
+    def send_prompt(self, prompt, temperature=0.1, context=None):
         if temperature < 0 or temperature > 1:
             raise GenAIExecption('Temperature must be between 0 and 1')
-
         if not prompt:
             raise GenAIExecption('Prompt cannot be empty')
 
         try:
-            responce = self.conversation.send_message(
-                content=prompt,
-                generation_config=self._generation_config(temperature),
+            response = self.client.models.generate_content(
+                model=self.MODEL_NAME,
+                contents=prompt,
+                config=self._grounded_config(temperature, context),
             )
-            responce.resolve()
-            return responce.text.strip()
-        except Exception as e:
-            return f"Erreur Gemini: {e}"
-
-    def send_prompt_with_history(self, messages, temperature=0.1):
-        """Comme send_prompt, mais reconstruit une conversation Gemini jetable à
-        partir d'un historique explicite (mélange possible de deux formats :
-        {'role':..,'content':..} venant de la DB, ou {'role':..,'parts':[..]}
-        natif Gemini venant de self._conversation_history), au lieu de dépendre
-        de self.conversation qui est partagé par toutes les requêtes de tous les
-        utilisateurs sur cette instance de ChatBot. Indispensable dès qu'il y a
-        plusieurs comptes/conversations en parallèle, sinon leurs échanges se
-        mélangent."""
-        if not messages:
-            raise GenAIExecption('Messages cannot be empty')
-
-        def _text_of(message):
-            if "content" in message:
-                return message["content"]
-            return message["parts"][0]
-
-        gemini_history = [
-            {
-                "role": "model" if m["role"] == "assistant" else m["role"],
-                "parts": [_text_of(m)],
-            }
-            for m in messages[:-1]
-        ]
-        last_message = _text_of(messages[-1])
-
-        try:
-            temp_conversation = self.model.start_chat(history=gemini_history)
-            response = temp_conversation.send_message(
-                content=last_message,
-                generation_config=self._generation_config(temperature),
-            )
-            response.resolve()
             return response.text.strip()
         except Exception as e:
             return f"Erreur Gemini: {e}"
 
-    def send_prompt_with_image(self, prompt, image_bytes, temperature=0.1):
+    def send_prompt_with_history(self, messages, temperature=0.1, context=None):
+        """messages : [{'role':.., 'content':..}, ...] reconstruit depuis la DB
+        pour cette conversation précise — jamais d'état partagé entre
+        utilisateurs. `context` va en system_instruction (voir plus haut)."""
+        if not messages:
+            raise GenAIExecption('Messages cannot be empty')
+
+        contents = self._to_gemini_contents(messages)
+
+        try:
+            response = self.client.models.generate_content(
+                model=self.MODEL_NAME,
+                contents=contents,
+                config=self._grounded_config(temperature, context),
+            )
+            return response.text.strip()
+        except Exception as e:
+            return f"Erreur Gemini: {e}"
+
+    def send_prompt_with_image(self, prompt, image_bytes, temperature=0.1, context=None):
         if not prompt:
             raise GenAIExecption("Prompt cannot be empty")
 
         try:
-            image = Image.open(io.BytesIO(image_bytes))
-
-            response = self.model.generate_content(
-                [
-                    prompt,
-                    image
-                ],
-                generation_config=self._generation_config(temperature)
+            image_part = types.Part.from_bytes(data=image_bytes, mime_type="image/jpeg")
+            response = self.client.models.generate_content(
+                model=self.MODEL_NAME,
+                contents=[prompt, image_part],
+                config=types.GenerateContentConfig(
+                    temperature=temperature,
+                    system_instruction=self._system_instruction(context),
+                ),
             )
-
-            response.resolve()
             return response.text.strip()
-
         except Exception as e:
             return f"Erreur Gemini (image): {e}"
 
@@ -106,57 +118,35 @@ class ChatBot:
             timezone = "UTC"
 
         formatted = now.strftime("%Y-%m-%d %H:%M:%S")
-
         return (
-            f"System information:\n"
-            f"- Current date and time: {formatted}\n"
-            f"- Timezone: {timezone}\n"
-            f"This information is authoritative."
+            f"Current date and time: {formatted} ({timezone}). "
+            f"Use this only if relevant to answering the user's question — "
+            f"never mention or acknowledge receiving this information."
         )
 
     @property
     def history(self):
-        conversation_history = [
-            {'role': message.role, 'text': message.parts[0].text} for message in self.conversation.history
-        ]
-        return conversation_history
+        return []
 
     def clear_conversation(self):
-        self.conversation = self.model.start_chat(history=[])
-
+        pass
     def start_convertion(self):
-        self.conversation = self.model.start_chat(history=self._conversation_history)
-
-    def _generation_config(self, temperature):
-        return genai.types.GenerationConfig(
-            temperature=temperature
-        )
-
-    def _construct_message(self, text, role='user'):
-        return {
-            'role': role,
-            'parts': [text]
-        }
-
+        pass
     def preload_conversation(self, conversation_history=None):
-        if isinstance(conversation_history, list):
-            self._conversation_history = conversation_history
-        else:
-            self._conversation_history = [
-                self._construct_message("Please format your responses in clear Markdown with headings, lists, and emphasis when useful.")
-            ]
+        self._conversation_history = []
 
     def generate_image(self, prompt):
         if not prompt:
             raise GenAIExecption("Le prompt ne peut pas être vide")
         try:
-            imagen_model = self.genai.GenerativeModel("gemini-2.5-flash-image-preview")
-            response = imagen_model.generate_content(prompt)
-            generated_image = response.candidates[0].content.parts[0].inline_data.data
-            img_byte_arr = io.BytesIO()
-            generated_image.save(img_byte_arr, format='PNG')
-            return img_byte_arr.getvalue()
-
+            response = self.client.models.generate_content(
+                model=self.IMAGE_MODEL_NAME,
+                contents=[prompt],
+            )
+            for part in response.candidates[0].content.parts:
+                if getattr(part, "inline_data", None) is not None:
+                    return part.inline_data.data
+            return None
         except Exception as e:
             print(f"Erreur de génération d'image: {e}")
             return None
@@ -173,13 +163,11 @@ class ChatBot:
             p.drawString(100, 730, text_content)
             p.showPage()
             p.save()
-
         elif file_type == "docx":
             doc = Document()
             doc.add_heading('Document IA', 0)
             doc.add_paragraph(text_content)
             doc.save(buf)
-
         elif file_type == "xlsx":
             df = pd.DataFrame({"Contenu": [text_content]})
             with pd.ExcelWriter(buf, engine='openpyxl') as writer:
@@ -189,38 +177,24 @@ class ChatBot:
         return buf.getvalue()
 
     def read_document(self, prompt, file_bytes, mime_type, temperature=0.1, history=None):
-        """Permet à Gemini d'analyser un document (PDF, Text, etc.).
-        `history` (optionnel) : messages précédents de la conversation (depuis
-        la DB), pour ne pas dépendre de l'état interne partagé self.conversation."""
+        """`history` (optionnel) : messages précédents de la conversation
+        (depuis la DB), pour ne pas dépendre d'un état interne partagé."""
         if not prompt:
             raise GenAIExecption("Le prompt ne peut pas être vide")
 
         try:
-            document_data = {
-                "mime_type": mime_type,
-                "data": file_bytes
-            }
+            doc_part = types.Part.from_bytes(data=file_bytes, mime_type=mime_type)
 
+            contents = []
             if history:
-                gemini_history = [
-                    {
-                        "role": "model" if m["role"] == "assistant" else m["role"],
-                        "parts": [m["content"]],
-                    }
-                    for m in history
-                ]
-                temp_conversation = self.model.start_chat(history=gemini_history)
-                response = temp_conversation.send_message(
-                    content=[prompt, document_data],
-                    generation_config=self._generation_config(temperature),
-                )
-            else:
-                response = self.model.generate_content(
-                    [prompt, document_data],
-                    generation_config=self._generation_config(temperature)
-                )
+                contents.extend(self._to_gemini_contents(history))
+            contents.append(types.Content(role="user", parts=[types.Part(text=prompt), doc_part]))
 
-            response.resolve()
+            response = self.client.models.generate_content(
+                model=self.MODEL_NAME,
+                contents=contents,
+                config=types.GenerateContentConfig(temperature=temperature),
+            )
             return response.text.strip()
         except Exception as e:
             return f"Erreur lors de l'analyse du document : {e}"

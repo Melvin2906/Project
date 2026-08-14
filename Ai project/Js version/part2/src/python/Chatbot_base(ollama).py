@@ -28,7 +28,6 @@ class ChatBot:
         self.conversation = []
         self._conversation_history = []
         self._sd_pipeline = None
-
         self.preload_conversation()
 
     def _ollama_chat(self, messages, temperature=0.1):
@@ -65,27 +64,37 @@ class ChatBot:
         except Exception as e:
             return f"Erreur LLM local: {e}"
 
-    def send_prompt_with_history(self, messages, temperature=0.1):
+    def send_prompt_with_history(self, messages, temperature=0.1, context=None):
         """Comme send_prompt, mais sans dépendre de l'état interne partagé
         (self.conversation). `messages` est la liste complète à envoyer
         ([{'role':..,'content':..}, ...]) — utile quand l'historique vit en DB
         par conversation/utilisateur, pour éviter que toutes les conversations
-        de tous les utilisateurs ne se mélangent dans une seule instance globale."""
+        de tous les utilisateurs ne se mélangent dans une seule instance globale.
+        `context` (ex: date/heure courante) part en message "system" séparé,
+        jamais mélangé au texte du message utilisateur."""
         if not messages:
             raise GenAIExecption('Messages cannot be empty')
 
+        full_messages = list(self._conversation_history)
+        if context:
+            full_messages.append({"role": "system", "content": context})
+        full_messages += list(messages)
+
         try:
-            return self._ollama_chat(messages, temperature)
+            return self._ollama_chat(full_messages, temperature)
         except Exception as e:
             return f"Erreur LLM local: {e}"
 
-    def send_prompt_with_image(self, prompt, image_bytes, temperature=0.1):
+    def send_prompt_with_image(self, prompt, image_bytes, temperature=0.1, context=None):
         if not prompt:
             raise GenAIExecption("Prompt cannot be empty")
 
         try:
             image_b64 = base64.b64encode(image_bytes).decode("utf-8")
-            messages = [{"role": "user", "content": prompt, "images": [image_b64]}]
+            messages = []
+            if context:
+                messages.append({"role": "system", "content": context})
+            messages.append({"role": "user", "content": prompt, "images": [image_b64]})
 
             resp = requests.post(
                 f"{self.OLLAMA_HOST}/api/chat",
@@ -173,7 +182,6 @@ class ChatBot:
         except Exception as e:
             print(f"Erreur de génération d'image: {e}")
             return None
-
     def generate_document(self, prompt, file_type):
         content_prompt = f"Génère le contenu textuel pour un fichier {file_type} basé sur : {prompt}. Sois concis."
         text_content = self.send_prompt(content_prompt)

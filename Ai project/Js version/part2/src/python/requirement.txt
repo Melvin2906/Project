@@ -18,7 +18,9 @@ bcrypt
 PyJWT
 python-dotenv
 
-google-generativeai
+# Uniquement si tu utilises chatbot_base_gemini.py au lieu de la version Ollama
+# google-generativeai est déprécié, on utilise le nouveau SDK :
+# google-genai
 
 # Flask (server.py)
 flask

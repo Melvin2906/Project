@@ -1,6 +1,5 @@
 from dotenv import load_dotenv
-load_dotenv()  # doit être fait AVANT d'importer auth/chatbot_base, qui lisent os.environ à l'import
-
+load_dotenv()
 from fastapi import FastAPI, Request, UploadFile, File, Form, Header, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
@@ -27,7 +26,6 @@ if not api_key:
         "ou ajoute-la dans Gemini.ini sous [gemini] api_key=... "
         "(peut être une valeur bidon si tu utilises un LLM local)"
     )
-
 secret_key = os.environ.get("SESSION_SECRET_KEY")
 if not secret_key:
     secret_key = secrets.token_hex(32)
@@ -129,6 +127,7 @@ async def update_timezone(body: TimezoneBody, request: Request):
     chatbot.update_datetime(timezone=timezone)
     return {"status": "ok", "timezone": timezone}
 
+
 @app.post("/ask")
 @limiter.limit("20/minute")
 async def ask(body: AskBody, request: Request, user=Depends(get_current_user)):
@@ -144,11 +143,9 @@ async def ask(body: AskBody, request: Request, user=Depends(get_current_user)):
     context = chatbot.update_datetime(timezone)
 
     history = db.get_messages(conversation_id)
-    full_messages = list(chatbot._conversation_history) + history + [
-        {"role": "user", "content": context + user_message}
-    ]
+    full_messages = history + [{"role": "user", "content": user_message}]
 
-    response = chatbot.send_prompt_with_history(full_messages)
+    response = chatbot.send_prompt_with_history(full_messages, context=context)
 
     db.add_message(conversation_id, "user", user_message)
     db.add_message(conversation_id, "assistant", response)
@@ -169,10 +166,9 @@ async def ask_image(
 
     timezone = request.session.get("timezone", "UTC")
     context = chatbot.update_datetime(timezone)
-    final_message = context + message
     image_bytes = await image.read()
 
-    response = chatbot.send_prompt_with_image(final_message, image_bytes)
+    response = chatbot.send_prompt_with_image(message, image_bytes, context=context)
 
     db.add_message(conversation_id, "user", f"[Image envoyée] {message}")
     db.add_message(conversation_id, "assistant", response)

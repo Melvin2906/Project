@@ -115,6 +115,7 @@ def update_timezone():
 
     return jsonify({"status": "ok", "timezone": timezone})
 
+
 @app.route("/ask", methods=["POST"])
 @require_auth
 @limiter.limit("20 per minute")
@@ -136,11 +137,9 @@ def ask():
     context = chatbot.update_datetime(timezone)
 
     history = db.get_messages(conversation_id)
-    full_messages = list(chatbot._conversation_history) + history + [
-        {"role": "user", "content": context + user_message}
-    ]
+    full_messages = history + [{"role": "user", "content": user_message}]
 
-    response = chatbot.send_prompt_with_history(full_messages)
+    response = chatbot.send_prompt_with_history(full_messages, context=context)
 
     db.add_message(conversation_id, "user", user_message)
     db.add_message(conversation_id, "assistant", response)
@@ -163,9 +162,8 @@ def ask_image():
 
     timezone = session.get("timezone", "UTC")
     context = chatbot.update_datetime(timezone)
-    final_message = context + prompt
     image_bytes = image_file.read()
-    response = chatbot.send_prompt_with_image(final_message, image_bytes)
+    response = chatbot.send_prompt_with_image(prompt, image_bytes, context=context)
 
     db.add_message(conversation_id, "user", f"[Image envoyée] {prompt}")
     db.add_message(conversation_id, "assistant", response)
