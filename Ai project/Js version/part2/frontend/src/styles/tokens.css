@@ -1,0 +1,72 @@
+/* ── Design tokens ──────────────────────────────────────────────
+   Palette : gris sombres neutres + accent ambre. Deux thèmes,
+   pilotés par [data-theme] sur <html>, système par défaut.      */
+
+:root {
+  --amber: #e3a03c;
+  --amber-ink: #1a1206;
+  --amber-soft: rgba(227, 160, 60, 0.16);
+  --danger: #d1584f;
+
+  --radius-sm: 8px;
+  --radius: 14px;
+  --radius-lg: 22px;
+
+  --font-ui: "Public Sans", system-ui, -apple-system, sans-serif;
+  --font-read: "Newsreader", Georgia, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --step--1: 0.8125rem;
+  --step-0: 0.9375rem;
+  --step-1: 1.0625rem;
+  --step-2: 1.375rem;
+  --step-3: 2rem;
+
+  --sidebar-w: 268px;
+  --rail-w: 60px;
+  --measure: 46rem;
+
+  --ease: cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
+:root,
+:root[data-theme="light"] {
+  --bg: #f7f7f6;
+  --surface: #ffffff;
+  --surface-2: #efefed;
+  --line: rgba(20, 20, 19, 0.12);
+  --line-strong: rgba(20, 20, 19, 0.24);
+  --text: #191918;
+  --text-dim: #6b6b68;
+  --bubble: #232322;
+  --bubble-text: #f7f7f6;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 12px 32px -18px rgba(0, 0, 0, 0.45);
+}
+
+:root[data-theme="dark"] {
+  --bg: #0e0e0d;
+  --surface: #191918;
+  --surface-2: #232322;
+  --line: rgba(240, 240, 237, 0.12);
+  --line-strong: rgba(240, 240, 237, 0.26);
+  --text: #ededea;
+  --text-dim: #9a9a95;
+  --bubble: #2b2b29;
+  --bubble-text: #f2f2ef;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 16px 40px -20px rgba(0, 0, 0, 0.8);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e0e0d;
+    --surface: #191918;
+    --surface-2: #232322;
+    --line: rgba(240, 240, 237, 0.12);
+    --line-strong: rgba(240, 240, 237, 0.26);
+    --text: #ededea;
+    --text-dim: #9a9a95;
+    --bubble: #2b2b29;
+    --bubble-text: #f2f2ef;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 16px 40px -20px rgba(0, 0, 0, 0.8);
+  }
+}

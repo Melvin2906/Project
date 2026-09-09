@@ -1,57 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="style/style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-</head>
-<body>
-    <section class="chat-window">
-        <input class="api-key" type="text" id="api-key" placeholder="Enter a valid api-key" style="display:none">
-        <div class="header">
-            <button class="full-screen" id="full-screen">
-                <img src="assets/full-screen.png" alt="full">
-                <a id="screen" href="full-screen.html" target="_blank" style="display:none"></a>
-            </button>
-            <button class="close">x close</button>
-        </div>
-        <div id="main-chat" class="chat">
-            <div id="model-message" class="model">
-                <p>Hi, how can I help you ?</p>
-            </div>
-        </div>
-        <div class="input-area">
-            <input class="Input" id="user-Input" placeholder="Ask me anything..." type="text">
-            <ul id="suggestions" class="suggestions"></ul> <!-- suggestions ici -->
-
-            <!-- caché l'input -->
-            <input type="file" id="upload" style="display:none" multiple>
-            <button id="add-button">
-                <img class="add" src="assets/paper-clip.png" alt="add file">
-            </button>
-            <button id="sent-button">
-                <img src="assets/send.png" alt="sent icone">
-            </button>
-        </div>
-    </section>
-
-    <div class="chat-button">
-        <img src="assets/ai.png" alt="">
-    </div>
-
-    <script type="importmap">
-        {
-            "imports": {
-                "@google/generative-ai": "https://esm.run/@google/generative-ai"
-            }
-        }
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script type="module" src="script.js"></script>
-    <!-- <script src="suggestion.js"></script> -->
-</body>
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="description" content="Assistant conversationnel : questions, images, documents et dictée vocale." />
+    <meta name="color-scheme" content="light dark" />
+    <title>My AI</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='13' fill='%23E3A03C'/></svg>" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Public+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>
