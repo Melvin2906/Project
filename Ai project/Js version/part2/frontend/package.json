@@ -1,10 +1,11 @@
 {
-  "name": "my-ai-frontend",
+  "name": "bouchoura-frontend",
   "private": true,
   "version": "2.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:mobile": "vite --host",
     "build": "vite build",
     "preview": "vite preview"
   },

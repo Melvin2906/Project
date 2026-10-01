@@ -37,7 +37,7 @@ export default function Sidebar({
     <aside className="sidebar">
       <div className="sidebar__head">
         <h1 className="wordmark">
-          My<span>.</span>AI
+          Bouchoura<span>.</span>
         </h1>
         <button type="button" className="icon-button" onClick={onToggleRail} aria-label="Replier le panneau">
           <Panel />

@@ -1,0 +1,14 @@
+# Jamais dans une image : secrets et dépendances compilées pour ta machine.
+.env
+.env.*
+**/node_modules
+**/__pycache__
+*.pyc
+
+# Données locales : la base SQLite vit dans un volume, pas dans l'image.
+src/python/temp/*
+src/python/Gemini.ini
+
+# Le front a son propre contexte de build.
+frontend
+.git

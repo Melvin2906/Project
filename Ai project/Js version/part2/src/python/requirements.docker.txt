@@ -1,0 +1,18 @@
+# Dépendances du backend chat (server.py + chatbot_base.py) — et rien d'autre.
+# torch, diffusers, transformers ne servent qu'à la variante Ollama et
+# pèseraient plusieurs Go dans l'image : ils restent dans requirement.txt.
+
+flask>=3.1,<4
+flask-cors>=6,<7
+flask-limiter>=3.8,<5
+gunicorn>=23,<24
+
+google-genai>=1.20,<2
+PyJWT>=2.10,<3
+python-dotenv>=1.1,<2
+
+pillow>=11,<13
+reportlab>=4.4,<5
+python-docx>=1.2,<2
+pandas>=2.2,<4
+openpyxl>=3.1,<4

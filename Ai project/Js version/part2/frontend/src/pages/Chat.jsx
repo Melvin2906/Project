@@ -93,7 +93,7 @@ export default function Chat() {
           >
             <Panel />
           </button>
-          <strong style={{ flex: 1 }}>My.AI</strong>
+          <strong style={{ flex: 1 }}>Bouchoura</strong>
           <button
             type="button"
             className="icon-button"
