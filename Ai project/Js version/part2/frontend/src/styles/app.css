@@ -17,7 +17,7 @@ body {
 button, input, textarea { font: inherit; color: inherit; }
 
 :focus-visible {
-  outline: 2px solid var(--amber);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -68,7 +68,7 @@ button, input, textarea { font: inherit; color: inherit; }
   white-space: nowrap;
 }
 
-.wordmark span { color: var(--amber); }
+.wordmark span { color: var(--accent); }
 
 .sidebar__new {
   display: flex;
@@ -77,14 +77,16 @@ button, input, textarea { font: inherit; color: inherit; }
   width: calc(100% - 24px);
   margin: 0 12px 10px;
   padding: 10px 12px;
-  background: var(--amber);
-  color: var(--amber-ink);
+  background: var(--accent-gradient);
+  color: var(--accent-ink);
   border: none;
-  border-radius: var(--radius);
+  border-radius: 999px;
   font-weight: 600;
   cursor: pointer;
-  transition: filter 0.15s var(--ease);
+  transition: filter 0.15s var(--ease), transform 0.08s var(--ease);
 }
+
+.sidebar__new:active { transform: scale(0.97); }
 
 .sidebar__new:hover { filter: brightness(1.06); }
 
@@ -116,7 +118,7 @@ button, input, textarea { font: inherit; color: inherit; }
 
 .history__item[aria-current="true"] {
   background: var(--surface-2);
-  box-shadow: inset 3px 0 0 var(--amber);
+  box-shadow: inset 3px 0 0 var(--accent);
 }
 
 .history__title {
@@ -269,7 +271,7 @@ button, input, textarea { font: inherit; color: inherit; }
 .msg--assistant {
   align-self: stretch;
   padding-left: 16px;
-  border-left: 2px solid var(--amber-soft);
+  border-left: 2px solid var(--accent-soft);
   font-family: var(--font-read);
   font-size: var(--step-1);
   line-height: 1.65;
@@ -456,11 +458,13 @@ button, input, textarea { font: inherit; color: inherit; }
   width: 36px; height: 36px;
   border: none;
   border-radius: 50%;
-  background: var(--amber);
-  color: var(--amber-ink);
+  background: var(--accent-gradient);
+  color: var(--accent-ink);
   cursor: pointer;
-  transition: opacity 0.15s var(--ease);
+  transition: opacity 0.15s var(--ease), transform 0.08s var(--ease);
 }
+
+.composer__send:active:not(:disabled) { transform: scale(0.9); }
 
 .composer__send:disabled { opacity: 0.4; cursor: not-allowed; }
 
@@ -472,7 +476,7 @@ button, input, textarea { font: inherit; color: inherit; }
 
 .mic[data-active="true"] {
   color: var(--danger);
-  background: var(--amber-soft);
+  background: var(--accent-soft);
 }
 
 /* ── Menu déroulant / dialogues ────────────────────────── */
@@ -597,13 +601,17 @@ button, input, textarea { font: inherit; color: inherit; }
 
 .button {
   padding: 12px 16px;
-  background: var(--amber);
-  color: var(--amber-ink);
-  border: none;
-  border-radius: var(--radius);
+  background: var(--accent-gradient);
+  color: var(--accent-ink);
+  border: 1px solid #353dad;
+  border-radius: 999px;
   font-weight: 600;
+  letter-spacing: 0.3px;
   cursor: pointer;
+  transition: transform 0.08s var(--ease);
 }
+
+.button:active:not(:disabled) { transform: scale(0.95); }
 
 .button:disabled { opacity: 0.5; cursor: not-allowed; }
 
@@ -668,7 +676,7 @@ button, input, textarea { font: inherit; color: inherit; }
 .thinking i {
   width: 6px; height: 6px;
   border-radius: 50%;
-  background: var(--amber);
+  background: var(--accent);
   animation: pulse 1.1s infinite var(--ease);
 }
 
@@ -680,38 +688,182 @@ button, input, textarea { font: inherit; color: inherit; }
   40% { opacity: 1; transform: translateY(-3px); }
 }
 
-/* ── Adaptatif ─────────────────────────────────────────── */
+/* ── Adaptatif ───────────────────────────────────────────
+   Trois axes indépendants, à ne pas confondre :
+   - la largeur (max-width)      : mise en page
+   - le pointeur (pointer/hover) : tactile vs souris
+   - la hauteur (max-height)     : téléphone en paysage      */
 
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+.drawer-scrim { display: none; }
+
+/* Tablette et en dessous : la barre latérale devient un tiroir */
 @media (max-width: 860px) {
   .app,
   .app[data-rail="true"] { grid-template-columns: minmax(0, 1fr); }
 
-  .topbar { display: flex; }
+  .topbar {
+    display: flex;
+    padding-top: max(8px, env(safe-area-inset-top));
+    padding-left: max(10px, env(safe-area-inset-left));
+    padding-right: max(10px, env(safe-area-inset-right));
+  }
+
+  .topbar strong {
+    font-family: var(--font-read);
+    font-size: var(--step-1);
+    font-weight: 500;
+  }
 
   .sidebar {
     position: fixed;
     inset: 0 auto 0 0;
     z-index: 60;
     width: min(300px, 85vw);
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
     transform: translateX(-100%);
     transition: transform 0.25s var(--ease);
+    box-shadow: var(--shadow);
+    visibility: hidden;
   }
 
-  .app[data-drawer="true"] .sidebar { transform: translateX(0); }
+  .app[data-drawer="true"] .sidebar {
+    transform: translateX(0);
+    visibility: visible;
+  }
 
+  .drawer-scrim {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 55;
+    background: rgba(17, 14, 48, 0.45);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s var(--ease);
+  }
+
+  .app[data-drawer="true"] .drawer-scrim {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Le mode rail n'a pas de sens dans un tiroir : on rétablit tout */
   .app[data-rail="true"] .wordmark,
   .app[data-rail="true"] .history,
   .app[data-rail="true"] .account__name,
   .app[data-rail="true"] .sidebar__new span { display: revert; }
 
-  .app[data-rail="true"] .sidebar__new { width: calc(100% - 24px); margin: 0 12px 10px; justify-content: flex-start; }
+  .app[data-rail="true"] .sidebar__head { justify-content: flex-start; padding: 14px 12px; }
+  .app[data-rail="true"] .sidebar__new { width: calc(100% - 24px); margin: 0 12px 10px; justify-content: flex-start; padding: 10px 12px; }
   .app[data-rail="true"] .sidebar__foot { justify-content: flex-start; }
+  .app[data-rail="true"] .account { flex: 1; justify-content: flex-start; }
 
   .msg--user { max-width: 88%; }
-  .dialog { grid-template-columns: minmax(0, 1fr); }
-  .dialog__nav { flex-direction: row; overflow-x: auto; padding: 10px; }
+
+  /* Réglages en plein écran, onglets en défilement horizontal */
+  .scrim { padding: 0; place-items: stretch; }
+
+  .dialog {
+    width: 100%;
+    max-height: none;
+    height: 100dvh;
+    border-radius: 0;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .dialog__nav {
+    flex-direction: row;
+    overflow-x: auto;
+    padding: max(10px, env(safe-area-inset-top)) 10px 10px;
+    scrollbar-width: none;
+  }
+
   .dialog__nav button { white-space: nowrap; }
-  @media (prefers-reduced-motion: reduce) {
+  .dialog__panel { padding: 16px 18px max(18px, env(safe-area-inset-bottom)); }
+
+  .row { flex-wrap: wrap; }
+}
+
+/* Téléphone */
+@media (max-width: 560px) {
+  .thread__inner {
+    width: calc(100% - 24px);
+    padding-top: 18px;
+    gap: 20px;
+  }
+
+  .composer {
+    width: calc(100% - 16px);
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
+  }
+
+  .composer__box { border-radius: 20px; padding: 6px; }
+  .composer__hint { display: none; }
+
+  .msg--assistant {
+    padding-left: 12px;
+    font-size: var(--step-0);
+  }
+
+  .msg__body pre { margin-left: -12px; margin-right: 0; border-radius: var(--radius-sm); }
+
+  .empty { padding: 16px 0; }
+  .empty__title { font-size: 1.625rem; }
+  .prompts { grid-template-columns: minmax(0, 1fr); }
+
+  .toasts { bottom: max(84px, calc(env(safe-area-inset-bottom) + 76px)); }
+}
+
+/* Écrans tactiles : pas de survol, cibles plus grandes */
+@media (hover: none) {
+  .msg__tools { opacity: 1; }
+  .history__delete { opacity: 0.6; }
+}
+
+@media (pointer: coarse) {
+  .icon-button { width: 42px; height: 42px; }
+  .composer__send { width: 42px; height: 42px; }
+  .history__item { padding-top: 12px; padding-bottom: 12px; }
+  .history__delete { padding: 8px; }
+  .msg__tool { padding: 8px 10px; }
+
+  /* En dessous de 16px, iOS zoome sur le champ au focus */
+  .composer__field,
+  .field input,
+  .select { font-size: 16px; }
+}
+
+/* Téléphone en paysage : on récupère de la hauteur */
+@media (max-height: 480px) and (orientation: landscape) {
+  .topbar { padding-top: 4px; padding-bottom: 4px; }
+  .thread__inner { padding-top: 10px; }
+  .composer__field { max-height: 80px; }
+  .composer__hint { display: none; }
+  .empty__title { font-size: 1.375rem; }
+  .prompts { display: none; }
+}
+
+/* Tableaux Markdown larges : défilement dans le message */
+.msg__body table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {

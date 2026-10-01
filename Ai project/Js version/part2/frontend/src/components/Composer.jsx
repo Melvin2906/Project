@@ -3,6 +3,10 @@ import { Clip, Close, Mic, Send } from "../lib/icons.jsx";
 
 const ACCEPT = "image/*,.pdf,.doc,.docx,.xlsx,.txt";
 
+// Sur écran tactile, Entrée saute une ligne (comme dans toutes les
+// messageries mobiles) et l'envoi passe par le bouton.
+const isTouch = () => window.matchMedia("(pointer: coarse)").matches;
+
 export default function Composer({ pending, onSend, onStop, speech }) {
   const [value, setValue] = useState("");
   const [files, setFiles] = useState([]);
@@ -27,7 +31,7 @@ export default function Composer({ pending, onSend, onStop, speech }) {
   };
 
   const onKeyDown = (event) => {
-    if (event.key === "Enter" && !event.shiftKey) {
+    if (event.key === "Enter" && !event.shiftKey && !isTouch()) {
       event.preventDefault();
       submit();
     }
@@ -99,6 +103,8 @@ export default function Composer({ pending, onSend, onStop, speech }) {
           onChange={(event) => setValue(event.target.value)}
           onKeyDown={onKeyDown}
           aria-label="Message"
+          enterKeyHint={isTouch() ? "enter" : "send"}
+          autoComplete="off"
         />
 
         <button

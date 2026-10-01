@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Sidebar from "../components/Sidebar.jsx";
 import Composer from "../components/Composer.jsx";
 import Message from "../components/Message.jsx";
@@ -33,6 +33,26 @@ export default function Chat() {
 
   const { ref: threadRef } = useAutoScroll([chat.messages, chat.pending]);
 
+  // Tiroir mobile : Échap le ferme, et la page derrière ne défile plus.
+  useEffect(() => {
+    if (!drawer) return;
+    const onKey = (event) => event.key === "Escape" && setDrawer(false);
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [drawer]);
+
+  // Repasser en grand écran avec le tiroir ouvert ne doit rien bloquer.
+  useEffect(() => {
+    const query = window.matchMedia("(min-width: 861px)");
+    const onChange = (event) => event.matches && setDrawer(false);
+    query.addEventListener("change", onChange);
+    return () => query.removeEventListener("change", onChange);
+  }, []);
+
   const changeVoiceLang = (value) => {
     setVoiceLang(value);
     localStorage.setItem("voiceLang", value);
@@ -60,6 +80,8 @@ export default function Chat() {
         onLogout={logout}
       />
 
+      <div className="drawer-scrim" onClick={() => setDrawer(false)} aria-hidden="true" />
+
       <main className="main">
         <div className="topbar">
           <button
@@ -67,6 +89,7 @@ export default function Chat() {
             className="icon-button"
             onClick={() => setDrawer((v) => !v)}
             aria-label="Ouvrir les conversations"
+            aria-expanded={drawer}
           >
             <Panel />
           </button>

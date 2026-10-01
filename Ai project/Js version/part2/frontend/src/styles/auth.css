@@ -1,7 +1,7 @@
 /* ── Écran de connexion ─────────────────────────────────────────
    Reprend le panneau coulissant de la v1 (deux formulaires
-   superposés, l'overlay glisse de gauche à droite), repeint en
-   gris sombres. Tout est portée par .auth-shell : aucune règle
+   superposés, l'overlay glisse de gauche à droite) avec son
+   dégradé indigo d'origine. Tout est portée par .auth-shell : aucune règle
    sur des sélecteurs d'éléments nus, contrairement à la v1.     */
 
 .auth-shell {
@@ -112,8 +112,8 @@
   left: -100%;
   width: 200%;
   height: 100%;
-  color: #f2f2ef;
-  background: linear-gradient(120deg, #0b0b0a 0%, #232322 55%, #35342f 100%);
+  color: #ffffff;
+  background: var(--accent-gradient);
   transform: translateX(0);
   transition: transform 0.6s ease-in-out;
 }
@@ -158,7 +158,7 @@
 .button--outline {
   background: none;
   color: inherit;
-  border: 1px solid rgba(242, 242, 239, 0.5);
+  border: 2px solid rgba(255, 255, 255, 0.85);
   padding: 10px 34px;
   border-radius: 999px;
   cursor: pointer;
@@ -166,8 +166,8 @@
 }
 
 .button--outline:hover {
-  border-color: #f2f2ef;
-  background: rgba(242, 242, 239, 0.08);
+  border-color: #ffffff;
+  background: rgba(255, 255, 255, 0.14);
 }
 
 /* Sous 760 px, le panneau coulissant ne tient plus :
@@ -204,4 +204,25 @@
   text-underline-offset: 3px;
   cursor: pointer;
   padding: 4px;
+}
+
+/* Téléphone : bords sûrs (encoche, barre de geste) et petits écrans */
+@media (max-width: 560px) {
+  .auth-shell {
+    padding:
+      max(16px, env(safe-area-inset-top))
+      max(12px, env(safe-area-inset-right))
+      max(16px, env(safe-area-inset-bottom))
+      max(12px, env(safe-area-inset-left));
+    place-items: start center;
+  }
+
+  .auth-card { margin-top: 4vh; }
+  .auth-form { padding: 0 16px; }
+  .socials a { width: 44px; height: 44px; }
+}
+
+@media (max-height: 480px) and (orientation: landscape) {
+  .auth-shell { place-items: start center; padding-top: 12px; }
+  .socials, .auth-form__note { display: none; }
 }
