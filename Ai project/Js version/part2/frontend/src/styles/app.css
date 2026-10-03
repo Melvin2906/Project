@@ -510,9 +510,10 @@ button, input, textarea { font: inherit; color: inherit; }
 .scrim {
   position: fixed;
   inset: 0;
-  z-index: 50;
-  background: rgba(4, 16, 14, 0.55);
+  z-index: 70;
+  background: rgba(17, 14, 48, 0.55);
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   place-items: center;
   padding: 16px;
 }
@@ -633,7 +634,8 @@ button, input, textarea { font: inherit; color: inherit; }
 
 .toasts {
   position: fixed;
-  bottom: 16px;
+  /* En haut : en bas, les notifications recouvraient la zone de saisie. */
+  top: max(12px, env(safe-area-inset-top));
   left: 50%;
   transform: translateX(-50%);
   z-index: 100;
@@ -824,7 +826,6 @@ body {
   .empty__title { font-size: 1.625rem; }
   .prompts { grid-template-columns: minmax(0, 1fr); }
 
-  .toasts { bottom: max(84px, calc(env(safe-area-inset-bottom) + 76px)); }
 }
 
 /* Écrans tactiles : pas de survol, cibles plus grandes */

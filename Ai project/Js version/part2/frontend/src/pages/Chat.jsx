@@ -76,7 +76,10 @@ export default function Chat() {
         onOpen={openConversation}
         onDelete={chat.removeConversation}
         onToggleRail={() => (window.innerWidth <= 860 ? setDrawer(false) : setRail((v) => !v))}
-        onOpenSettings={() => setSettings(true)}
+        onOpenSettings={() => {
+          setDrawer(false);
+          setSettings(true);
+        }}
         onLogout={logout}
       />
 
